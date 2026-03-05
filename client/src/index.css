@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-maroon: #800020;
+  --color-maroon-light: #9a1b3a;
+  --color-maroon-dark: #5c0017;
+  --color-gold: #D4AF37;
+  --color-gold-light: #e8c84a;
+  --color-gold-dark: #b8952e;
+  --color-cream: #FAF7F2;
+  --color-cream-dark: #f0ebe0;
+  --color-charcoal: #2D2D2D;
+  --color-charcoal-light: #4a4a4a;
+
+  --font-heading: 'Noto Serif Devanagari', serif;
+  --font-body: 'Noto Sans Devanagari', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #FAF7F2;
+  color: #2D2D2D;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Custom color utilities - fallback for Tailwind v4 */
+.text-maroon { color: #800020 !important; }
+.text-maroon-light { color: #9a1b3a !important; }
+.text-maroon-dark { color: #5c0017 !important; }
+.text-gold { color: #D4AF37 !important; }
+.text-charcoal { color: #2D2D2D !important; }
+.text-charcoal-light { color: #4a4a4a !important; }
+.text-cream { color: #FAF7F2 !important; }
+
+.bg-maroon { background-color: #800020 !important; }
+.bg-maroon-light { background-color: #9a1b3a !important; }
+.bg-maroon-dark { background-color: #5c0017 !important; }
+.bg-gold { background-color: #D4AF37 !important; }
+.bg-cream { background-color: #FAF7F2 !important; }
+.bg-cream-dark { background-color: #f0ebe0 !important; }
+.bg-charcoal { background-color: #2D2D2D !important; }
+
+.border-maroon { border-color: #800020 !important; }
+.border-gold { border-color: #D4AF37 !important; }
+.border-cream { border-color: #FAF7F2 !important; }
+.border-cream-dark { border-color: #f0ebe0 !important; }
+
+.hover\:text-maroon:hover { color: #800020 !important; }
+.hover\:bg-maroon:hover { background-color: #800020 !important; }
+.hover\:bg-maroon-dark:hover { background-color: #5c0017 !important; }
+.hover\:bg-cream:hover { background-color: #FAF7F2 !important; }
+.hover\:bg-cream-dark:hover { background-color: #f0ebe0 !important; }
+.hover\:border-maroon:hover { border-color: #800020 !important; }
+
+.focus\:ring-maroon\/20:focus { --tw-ring-color: rgba(128, 0, 32, 0.2); }
+
+.font-heading { font-family: 'Noto Serif Devanagari', serif !important; }
+.font-body { font-family: 'Noto Sans Devanagari', sans-serif !important; }
+
+.from-maroon\/90 { --tw-gradient-from: rgba(128, 0, 32, 0.9); }
+.via-maroon\/30 { --tw-gradient-via: rgba(128, 0, 32, 0.3); }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #800020;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5c0017;
+}
+
+::selection {
+  background-color: #800020;
+  color: white;
+}

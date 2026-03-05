@@ -1,0 +1,341 @@
+import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
+import PageTransition from '../components/animations/PageTransition';
+import SareeCard from '../components/catalog/SareeCard';
+import StaggerChildren from '../components/animations/StaggerChildren';
+import { sarees, categories } from '../data/dummyData';
+
+const sortOptions = [
+  { value: 'newest', label: 'नई साड़ियाँ' },
+  { value: 'price-low', label: 'कम कीमत' },
+  { value: 'price-high', label: 'ज़्यादा कीमत' },
+];
+
+const fabricOptions = ['शुद्ध सिल्क', 'कॉटन', 'ऑर्गेंज़ा', 'जॉर्जेट', 'लिनन कॉटन'];
+const colorOptions = ['लाल', 'सुनहरा', 'नीला', 'बैंगनी', 'काला', 'गुलाबी', 'हरा', 'बेज', 'पीला', 'मेरून'];
+
+export default function Catalog() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showFilters, setShowFilters] = useState(false);
+  const [sort, setSort] = useState('newest');
+
+  const activeCategory = searchParams.get('category') || '';
+  const [activeFabric, setActiveFabric] = useState('');
+  const [activeColor, setActiveColor] = useState('');
+
+  const filtered = useMemo(() => {
+    let result = [...sarees];
+
+    if (activeCategory) {
+      result = result.filter((s) => s.category === activeCategory);
+    }
+    if (activeFabric) {
+      result = result.filter((s) => s.fabric === activeFabric);
+    }
+    if (activeColor) {
+      result = result.filter((s) => s.color === activeColor);
+    }
+
+    switch (sort) {
+      case 'price-low':
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case 'newest':
+        result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+        break;
+    }
+
+    return result;
+  }, [activeCategory, activeFabric, activeColor, sort]);
+
+  const clearFilters = () => {
+    setSearchParams({});
+    setActiveFabric('');
+    setActiveColor('');
+  };
+
+  const hasActiveFilters = activeCategory || activeFabric || activeColor;
+
+  return (
+    <PageTransition>
+      <div style={{ paddingTop: '80px', paddingBottom: '100px' }} className="md:pt-24 md:pb-12 min-h-screen">
+        {/* Header */}
+        <div className="max-w-7xl mx-auto" style={{ padding: '0 16px' }}>
+          <h1 className="font-heading font-bold text-maroon" style={{ fontSize: '26px', marginBottom: '6px' }}>
+            साड़ियाँ
+          </h1>
+          <p className="text-charcoal-light" style={{ fontSize: '14px', marginBottom: '20px' }}>
+            हमारा पूरा संग्रह देखें ({filtered.length} साड़ियाँ)
+          </p>
+
+          {/* Sort & Filter Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', gap: '10px', overflow: 'hidden' }}>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="md:hidden"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', backgroundColor: '#fff', border: '1px solid #f0ebe0', padding: '9px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: '500', cursor: 'pointer', flexShrink: 0 }}
+            >
+              <SlidersHorizontal size={14} />
+              फ़िल्टर
+              {hasActiveFilters && (
+                <span style={{ width: '6px', height: '6px', backgroundColor: '#800020', borderRadius: '50%', display: 'inline-block' }} />
+              )}
+            </button>
+
+            <div style={{ position: 'relative', minWidth: '0' }}>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                style={{ appearance: 'none', backgroundColor: '#fff', border: '1px solid #f0ebe0', padding: '9px 28px 9px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: '500', cursor: 'pointer', outline: 'none', width: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                {sortOptions.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={14}
+                style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#4a4a4a' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '32px' }}>
+            {/* Desktop Sidebar Filters */}
+            <div className="hidden md:block" style={{ width: '220px', flexShrink: '0' }}>
+              <FilterPanel
+                activeCategory={activeCategory}
+                activeFabric={activeFabric}
+                activeColor={activeColor}
+                onCategoryChange={(c) =>
+                  setSearchParams(c ? { category: c } : {})
+                }
+                onFabricChange={setActiveFabric}
+                onColorChange={setActiveColor}
+                onClear={clearFilters}
+                hasActiveFilters={!!hasActiveFilters}
+              />
+            </div>
+
+            {/* Mobile Filter Drawer */}
+            <AnimatePresence>
+              {showFilters && (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="md:hidden"
+                    style={{ position: 'fixed', inset: '0', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50 }}
+                    onClick={() => setShowFilters(false)}
+                  />
+                  <motion.div
+                    initial={{ y: '100%' }}
+                    animate={{ y: 0 }}
+                    exit={{ y: '100%' }}
+                    transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+                    className="md:hidden"
+                    style={{ position: 'fixed', bottom: '0', left: '0', right: '0', backgroundColor: '#fff', borderRadius: '20px 20px 0 0', zIndex: 50, maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}
+                  >
+                    {/* Handle bar */}
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 0' }}>
+                      <div style={{ width: '36px', height: '4px', backgroundColor: '#e0e0e0', borderRadius: '2px' }} />
+                    </div>
+
+                    {/* Header */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px 12px' }}>
+                      <div>
+                        <h3 className="font-heading" style={{ fontSize: '18px', fontWeight: '700', color: '#2D2D2D', margin: '0' }}>फ़िल्टर</h3>
+                        {hasActiveFilters && (
+                          <p style={{ fontSize: '12px', color: '#800020', marginTop: '2px' }}>फ़िल्टर लागू हैं</p>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {hasActiveFilters && (
+                          <button
+                            onClick={clearFilters}
+                            style={{ fontSize: '12px', color: '#800020', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                          >
+                            सब हटाएँ
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setShowFilters(false)}
+                          style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}
+                        >
+                          <X size={16} style={{ color: '#666' }} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ height: '1px', backgroundColor: '#f0f0f0' }} />
+
+                    {/* Scrollable content */}
+                    <div style={{ overflowY: 'auto', padding: '20px', flex: '1' }}>
+                      <FilterPanel
+                        activeCategory={activeCategory}
+                        activeFabric={activeFabric}
+                        activeColor={activeColor}
+                        onCategoryChange={(c) => {
+                          setSearchParams(c ? { category: c } : {});
+                        }}
+                        onFabricChange={setActiveFabric}
+                        onColorChange={setActiveColor}
+                        onClear={clearFilters}
+                        hasActiveFilters={!!hasActiveFilters}
+                      />
+                    </div>
+
+                    {/* Fixed bottom button */}
+                    <div style={{ padding: '16px 20px', paddingBottom: '28px', borderTop: '1px solid #f0f0f0', backgroundColor: '#fff' }}>
+                      <button
+                        onClick={() => setShowFilters(false)}
+                        style={{ width: '100%', backgroundColor: '#800020', color: '#fff', fontWeight: '600', padding: '14px', borderRadius: '12px', fontSize: '14px', border: 'none', cursor: 'pointer' }}
+                      >
+                        {filtered.length} साड़ियाँ देखें
+                      </button>
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+
+            {/* Saree Grid */}
+            <div style={{ flex: '1', minWidth: '0' }}>
+              {filtered.length > 0 ? (
+                <StaggerChildren className="grid grid-cols-2 lg:grid-cols-3" style={{ gap: '12px' }}>
+                  {filtered.map((saree) => (
+                    <SareeCard key={saree.id} saree={saree} />
+                  ))}
+                </StaggerChildren>
+              ) : (
+                <div className="text-center py-20">
+                  <p className="text-charcoal-light text-lg">
+                    कोई साड़ी नहीं मिली
+                  </p>
+                  <button
+                    onClick={clearFilters}
+                    className="mt-4 text-maroon font-semibold underline"
+                  >
+                    सभी फ़िल्टर हटाएँ
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </PageTransition>
+  );
+}
+
+interface FilterPanelProps {
+  activeCategory: string;
+  activeFabric: string;
+  activeColor: string;
+  onCategoryChange: (c: string) => void;
+  onFabricChange: (f: string) => void;
+  onColorChange: (c: string) => void;
+  onClear: () => void;
+  hasActiveFilters: boolean;
+}
+
+function FilterPanel({
+  activeCategory,
+  activeFabric,
+  activeColor,
+  onCategoryChange,
+  onFabricChange,
+  onColorChange,
+  onClear,
+  hasActiveFilters,
+}: FilterPanelProps) {
+
+  const chipStyle = (isActive: boolean): React.CSSProperties => ({
+    padding: '8px 16px',
+    borderRadius: '20px',
+    fontSize: '13px',
+    fontWeight: isActive ? '600' : '400',
+    border: isActive ? '1.5px solid #800020' : '1.5px solid #e8e8e8',
+    backgroundColor: isActive ? '#800020' : '#fff',
+    color: isActive ? '#fff' : '#2D2D2D',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
+    whiteSpace: 'nowrap' as const,
+  });
+
+  const sectionTitle: React.CSSProperties = {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    marginBottom: '12px',
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {hasActiveFilters && (
+        <button
+          onClick={onClear}
+          style={{ fontSize: '12px', color: '#800020', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', textAlign: 'left', padding: '0' }}
+        >
+          सभी फ़िल्टर हटाएँ
+        </button>
+      )}
+      {/* Category */}
+      <div>
+        <h4 style={sectionTitle}>श्रेणी</h4>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => onCategoryChange(activeCategory === cat.id ? '' : cat.id)}
+              style={chipStyle(activeCategory === cat.id)}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Fabric */}
+      <div>
+        <h4 style={sectionTitle}>कपड़ा</h4>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {fabricOptions.map((f) => (
+            <button
+              key={f}
+              onClick={() => onFabricChange(activeFabric === f ? '' : f)}
+              style={chipStyle(activeFabric === f)}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Color */}
+      <div>
+        <h4 style={sectionTitle}>रंग</h4>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {colorOptions.map((c) => (
+            <button
+              key={c}
+              onClick={() => onColorChange(activeColor === c ? '' : c)}
+              style={chipStyle(activeColor === c)}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
