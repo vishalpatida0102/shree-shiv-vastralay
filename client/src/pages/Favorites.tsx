@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -7,11 +8,29 @@ import ScrollReveal from '../components/animations/ScrollReveal';
 import StaggerChildren from '../components/animations/StaggerChildren';
 import SareeCard from '../components/catalog/SareeCard';
 import { useFavorites } from '../hooks/useFavorites';
-import { sarees } from '../data/dummyData';
+import { productsApi } from '../services/api';
+import { toSaree } from '../services/helpers';
+import type { Saree } from '../types';
 
 export default function Favorites() {
   const { favorites } = useFavorites();
-  const favSarees = sarees.filter((s) => favorites.includes(s.id));
+  const [favSarees, setFavSarees] = useState<Saree[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (favorites.length === 0) {
+      setFavSarees([]);
+      setLoading(false);
+      return;
+    }
+
+    productsApi.getAll().then((products) => {
+      const mapped = products.map(toSaree);
+      setFavSarees(mapped.filter((s) => favorites.includes(s.id)));
+    }).catch(() => {
+      setFavSarees([]);
+    }).finally(() => setLoading(false));
+  }, [favorites]);
 
   return (
     <PageTransition>
@@ -68,7 +87,7 @@ export default function Favorites() {
                   <p style={{ fontSize: '13px', color: '#999', margin: '2px 0 0' }}>
                     {favSarees.length > 0
                       ? `${favSarees.length} साड़ियाँ आपकी पसंद में`
-                      : 'अभी कोई पसंदीदा नहीं'}
+                      : loading ? 'लोड हो रहा है...' : 'अभी कोई पसंदीदा नहीं'}
                   </p>
                 </div>
               </div>
@@ -78,7 +97,11 @@ export default function Favorites() {
 
         {/* Content */}
         <div style={{ padding: '0 16px 120px', maxWidth: '1200px', margin: '0 auto' }}>
-          {favSarees.length > 0 ? (
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#999', fontSize: '14px' }}>
+              लोड हो रहा है...
+            </div>
+          ) : favSarees.length > 0 ? (
             <StaggerChildren>
               <style>{`
                 #fav-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
