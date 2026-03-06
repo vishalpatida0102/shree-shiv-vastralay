@@ -6,6 +6,7 @@ export interface Saree {
   description: string;
   images: string[];
   category: string;
+  categoryName?: string;
   fabric: string;
   color: string;
   occasion: string;
@@ -29,4 +30,14 @@ export interface Testimonial {
   text: string;
   rating: number;
   image: string;
+}
+
+export interface Review {
+  id: string;
+  name: string;
+  location: string;
+  rating: number;
+  message: string;
+  date: string;
+  status: 'pending' | 'approved' | 'rejected';
 }

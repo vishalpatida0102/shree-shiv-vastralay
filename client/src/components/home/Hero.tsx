@@ -139,7 +139,7 @@ export default function Hero() {
               background: btnHovered
                 ? 'linear-gradient(135deg, #fff, #f5f0eb)'
                 : 'linear-gradient(135deg, #D4AF37, #c49a20)',
-              color: btnHovered ? '#800020' : '#2D2D2D',
+              color: btnHovered ? '#2D2D2D' : '#2D2D2D',
               fontWeight: '700',
               padding: '14px 32px',
               borderRadius: '50px',

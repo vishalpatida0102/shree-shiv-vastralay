@@ -1,12 +1,23 @@
+import { useState, useEffect } from 'react';
 import SectionHeading from '../ui/SectionHeading';
 import SareeCard from '../catalog/SareeCard';
 import StaggerChildren from '../animations/StaggerChildren';
-import { sarees } from '../../data/dummyData';
+import { productsApi } from '../../services/api';
+import { toSaree } from '../../services/helpers';
+import type { Saree } from '../../types';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 
 export default function FeaturedSarees() {
-  const featured = sarees.filter((s) => s.isFeatured).slice(0, 6);
+  const [featured, setFeatured] = useState<Saree[]>([]);
+
+  useEffect(() => {
+    productsApi.getAll({ featured: 'true' })
+      .then((prods) => setFeatured(prods.map(toSaree).slice(0, 6)))
+      .catch(() => {});
+  }, []);
+
+  if (featured.length === 0) return null;
 
   return (
     <section style={{ padding: '48px 16px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -28,8 +39,8 @@ export default function FeaturedSarees() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            border: '2px solid #800020',
-            color: '#800020',
+            border: '2px solid #B8960C',
+            color: '#B8960C',
             fontWeight: '600',
             padding: '12px 28px',
             borderRadius: '50px',
@@ -38,12 +49,12 @@ export default function FeaturedSarees() {
             transition: 'all 0.3s',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#800020';
+            e.currentTarget.style.backgroundColor = '#B8960C';
             e.currentTarget.style.color = '#fff';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = '#800020';
+            e.currentTarget.style.color = '#B8960C';
           }}
         >
           सभी साड़ियाँ देखें

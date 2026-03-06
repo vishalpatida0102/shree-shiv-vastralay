@@ -1,169 +1,120 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Grid3X3, TrendingUp, Eye, ArrowUpRight, ArrowDownRight, MoreHorizontal } from 'lucide-react';
+import { ShoppingBag, Grid3X3, TrendingUp, Eye, Loader2 } from 'lucide-react';
 import AdminLayout from '../../components/layout/AdminLayout';
-import { sarees, categories } from '../../data/dummyData';
+import { productsApi, categoriesApi } from '../../services/api';
+import type { ApiProduct, ApiCategory } from '../../services/api';
 
 export default function AdminDashboard() {
+  const [products, setProducts] = useState<ApiProduct[]>([]);
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([productsApi.getAll(), categoriesApi.getAll()])
+      .then(([prods, cats]) => {
+        setProducts(prods);
+        setCategories(cats);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   const stats = [
-    {
-      label: 'Total Products',
-      value: sarees.length,
-      icon: ShoppingBag,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-500',
-      trend: '+4.2%',
-      trendUp: true,
-    },
-    {
-      label: 'Categories',
-      value: categories.length,
-      icon: Grid3X3,
-      iconBg: 'bg-emerald-50',
-      iconColor: 'text-emerald-500',
-      trend: '+1.8%',
-      trendUp: true,
-    },
-    {
-      label: 'Featured',
-      value: sarees.filter((s) => s.isFeatured).length,
-      icon: TrendingUp,
-      iconBg: 'bg-orange-50',
-      iconColor: 'text-orange-500',
-      trend: '-2.1%',
-      trendUp: false,
-    },
-    {
-      label: 'New Arrivals',
-      value: sarees.filter((s) => s.isNew).length,
-      icon: Eye,
-      iconBg: 'bg-purple-50',
-      iconColor: 'text-purple-500',
-      trend: '+0.7%',
-      trendUp: true,
-    },
+    { label: 'कुल उत्पाद', value: products.length, icon: ShoppingBag, iconBg: '#eff6ff', iconColor: '#3b82f6' },
+    { label: 'कुल श्रेणियाँ', value: categories.length, icon: Grid3X3, iconBg: '#f0fdf4', iconColor: '#10b981' },
+    { label: 'विशेष', value: products.filter((s) => s.isFeatured).length, icon: TrendingUp, iconBg: '#fff7ed', iconColor: '#f97316' },
+    { label: 'नई आवक', value: products.filter((s) => s.isNewArrival).length, icon: Eye, iconBg: '#faf5ff', iconColor: '#a855f7' },
   ];
 
+  if (loading) {
+    return (
+      <AdminLayout title="नमस्ते, एडमिन">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0' }}>
+          <Loader2 size={28} style={{ color: '#d35400', animation: 'spin 1s linear infinite' }} />
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
-    <AdminLayout title="Hi, Admin 👋">
+    <AdminLayout title="नमस्ते, एडमिन">
       {/* Heading */}
       <div style={{ marginBottom: '32px' }}>
-        <h2 className="text-2xl font-bold text-[#222]">Store Overview</h2>
-        <p className="text-[#999] text-sm" style={{ marginTop: '6px' }}>
-          Get a detailed overview of your products, categories, and store performance.
+        <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#222', margin: 0 }}>स्टोर अवलोकन</h2>
+        <p style={{ fontSize: '14px', color: '#999', marginTop: '6px' }}>
+          अपने उत्पादों, श्रेणियों और स्टोर प्रदर्शन का विस्तृत अवलोकन प्राप्त करें।
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5" style={{ marginBottom: '32px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '32px' }}>
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div
-              key={stat.label}
-              className="bg-white rounded-2xl border border-[#f0f0f0]"
-              style={{ padding: '24px' }}
-            >
-              <div className="flex items-center justify-between" style={{ marginBottom: '20px' }}>
-                <div className={`w-10 h-10 rounded-xl ${stat.iconBg} flex items-center justify-center`}>
-                  <Icon size={20} className={stat.iconColor} />
+            <div key={stat.label} style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0f0f0', padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: stat.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon size={20} style={{ color: stat.iconColor }} />
                 </div>
-                <button className="text-[#ccc] hover:text-[#999]">
-                  <MoreHorizontal size={18} />
-                </button>
               </div>
-              <p className="text-3xl font-bold text-[#222]">{stat.value}</p>
-              <p className="text-[#999] text-sm" style={{ marginTop: '4px' }}>{stat.label}</p>
-              <div className="flex items-center gap-1" style={{ marginTop: '12px' }}>
-                {stat.trendUp ? (
-                  <ArrowUpRight size={14} className="text-emerald-500" />
-                ) : (
-                  <ArrowDownRight size={14} className="text-red-400" />
-                )}
-                <span className={`text-xs font-medium ${stat.trendUp ? 'text-emerald-500' : 'text-red-400'}`}>
-                  {stat.trend}
-                </span>
-                <span className="text-[#ccc] text-xs">vs last month</span>
-              </div>
+              <p style={{ fontSize: '30px', fontWeight: '700', color: '#222', margin: 0 }}>{stat.value}</p>
+              <p style={{ fontSize: '14px', color: '#999', marginTop: '4px' }}>{stat.label}</p>
             </div>
           );
         })}
       </div>
 
       {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '20px' }}>
         {/* Recent Products */}
-        <div className="bg-white rounded-2xl border border-[#f0f0f0]">
-          <div className="flex items-center justify-between" style={{ padding: '20px 24px' }}>
-            <h3 className="font-semibold text-[#222]">Recent Products</h3>
-            <Link
-              to="/admin/products"
-              className="text-xs text-[#d35400] font-medium hover:underline"
-            >
-              View All
-            </Link>
+        <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0f0f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#222', margin: 0 }}>हाल के उत्पाद</h3>
+            <Link to="/admin/products" style={{ fontSize: '12px', color: '#d35400', fontWeight: '500', textDecoration: 'none' }}>सभी देखें</Link>
           </div>
           <div>
-            {sarees.slice(0, 5).map((saree, i) => (
-              <div
-                key={saree.id}
-                className={`flex items-center gap-4 hover:bg-[#fafafa] transition-colors ${
-                  i !== 0 ? 'border-t border-[#f5f5f5]' : ''
-                }`}
-                style={{ padding: '14px 24px' }}
-              >
-                <img
-                  src={saree.images[0]}
-                  alt={saree.name}
-                  className="w-10 h-12 rounded-lg object-cover"
-                />
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-sm text-[#333] truncate">
-                    {saree.name}
-                  </h4>
-                  <p className="text-xs text-[#aaa]">{saree.fabric}</p>
+            {products.slice(0, 5).map((product, i) => (
+              <div key={product._id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 24px', borderTop: i !== 0 ? '1px solid #f5f5f5' : 'none' }}>
+                <img src={product.images[0]} alt={product.name} style={{ width: '40px', height: '48px', borderRadius: '8px', objectFit: 'cover' }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: '500', color: '#333', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.name}</h4>
+                  <p style={{ fontSize: '12px', color: '#aaa', margin: 0 }}>{product.fabric}</p>
                 </div>
-                <span className="font-semibold text-sm text-[#222] whitespace-nowrap">
-                  ₹{saree.price.toLocaleString('hi-IN')}
-                </span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#222', whiteSpace: 'nowrap' }}>₹{product.price.toLocaleString('hi-IN')}</span>
               </div>
             ))}
+            {products.length === 0 && (
+              <p style={{ textAlign: 'center', padding: '24px', color: '#bbb', fontSize: '13px' }}>अभी कोई उत्पाद नहीं</p>
+            )}
           </div>
         </div>
 
         {/* Top Categories */}
-        <div className="bg-white rounded-2xl border border-[#f0f0f0]">
-          <div className="flex items-center justify-between" style={{ padding: '20px 24px' }}>
-            <h3 className="font-semibold text-[#222]">Top Categories</h3>
-            <Link
-              to="/admin/categories"
-              className="text-xs text-[#d35400] font-medium hover:underline"
-            >
-              View All
-            </Link>
+        <div style={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #f0f0f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#222', margin: 0 }}>शीर्ष श्रेणियाँ</h3>
+            <Link to="/admin/categories" style={{ fontSize: '12px', color: '#d35400', fontWeight: '500', textDecoration: 'none' }}>सभी देखें</Link>
           </div>
           <div>
             {categories.map((cat, i) => (
-              <div
-                key={cat.id}
-                className={`flex items-center gap-4 hover:bg-[#fafafa] transition-colors ${
-                  i !== 0 ? 'border-t border-[#f5f5f5]' : ''
-                }`}
-                style={{ padding: '14px 24px' }}
-              >
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="w-10 h-10 rounded-lg object-cover"
-                />
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-sm text-[#333]">
-                    {cat.name}
-                  </h4>
-                  <p className="text-xs text-[#aaa]">{cat.count} products</p>
+              <div key={cat._id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 24px', borderTop: i !== 0 ? '1px solid #f5f5f5' : 'none' }}>
+                {cat.image ? (
+                  <img src={cat.image} alt={cat.name} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Grid3X3 size={18} style={{ color: '#ccc' }} />
+                  </div>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: '500', color: '#333', margin: 0 }}>{cat.name}</h4>
+                  <p style={{ fontSize: '12px', color: '#aaa', margin: 0 }}>{cat.count} उत्पाद</p>
                 </div>
-                <span className="text-sm font-semibold text-[#888]">#{i + 1}</span>
+                <span style={{ fontSize: '14px', fontWeight: '600', color: '#888' }}>#{i + 1}</span>
               </div>
             ))}
+            {categories.length === 0 && (
+              <p style={{ textAlign: 'center', padding: '24px', color: '#bbb', fontSize: '13px' }}>अभी कोई श्रेणी नहीं</p>
+            )}
           </div>
         </div>
       </div>

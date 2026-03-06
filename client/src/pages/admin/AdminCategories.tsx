@@ -1,239 +1,276 @@
-import { useState } from 'react';
-import { Plus, Pencil, Trash2, Search, Eye, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Plus, Pencil, Trash2, Search, Eye, X, Grid3X3, Loader } from 'lucide-react';
 import AdminLayout from '../../components/layout/AdminLayout';
-import { categories as dummyCategories, sarees } from '../../data/dummyData';
-import type { Category } from '../../types';
+import { categoriesApi, uploadApi } from '../../services/api';
+import type { ApiCategory } from '../../services/api';
 
 export default function AdminCategories() {
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: '', description: '' });
-  const [viewCat, setViewCat] = useState<Category | null>(null);
+  const [form, setForm] = useState({ name: '', description: '', image: '' });
+  const [viewCat, setViewCat] = useState<ApiCategory | null>(null);
+  const [focusedField, setFocusedField] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  const filtered = dummyCategories.filter((c) => {
-    const matchSearch = c.name.toLowerCase().includes(search.toLowerCase());
-    return matchSearch;
-  });
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const data = await categoriesApi.getAll();
+      setCategories(data);
+    } catch {
+      setError('श्रेणियाँ लोड करने में विफल');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchCategories(); }, [fetchCategories]);
+
+  const filtered = categories.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   const openNew = () => {
     setEditId(null);
-    setForm({ name: '', description: '' });
+    setForm({ name: '', description: '', image: '' });
     setShowModal(true);
+    setError('');
   };
 
   const openEdit = (id: string) => {
-    const cat = dummyCategories.find((c) => c.id === id);
+    const cat = categories.find((c) => c._id === id);
     if (cat) {
       setEditId(id);
-      setForm({ name: cat.name, description: cat.description });
+      setForm({ name: cat.name, description: cat.description || '', image: cat.image || '' });
       setShowModal(true);
+      setError('');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowModal(false);
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { url } = await uploadApi.image(file);
+      setForm((f) => ({ ...f, image: url }));
+    } catch {
+      setError('तस्वीर अपलोड विफल');
+    } finally {
+      setUploading(false);
+    }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError('');
+    try {
+      if (editId) {
+        await categoriesApi.update(editId, form);
+      } else {
+        await categoriesApi.create(form);
+      }
+      setShowModal(false);
+      fetchCategories();
+      showToast(editId ? 'श्रेणी सफलतापूर्वक अपडेट हुई!' : 'श्रेणी सफलतापूर्वक बनाई गई!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'सहेजने में विफल');
+      showToast('श्रेणी सहेजने में विफल', 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    setDeleting(id);
+    setError('');
+    try {
+      await categoriesApi.delete(id);
+      setCategories(categories.filter((c) => c._id !== id));
+      if (viewCat?._id === id) setViewCat(null);
+      showToast('श्रेणी सफलतापूर्वक हटाई गई!');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'हटाने में विफल');
+      showToast('श्रेणी हटाने में विफल', 'error');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const inputStyle = (field: string): React.CSSProperties => ({
+    width: '100%',
+    padding: '12px 14px',
+    border: focusedField === field ? '1.5px solid #d35400' : '1.5px solid #eee',
+    borderRadius: '10px',
+    fontSize: '13px',
+    outline: 'none',
+    backgroundColor: focusedField === field ? '#fff' : '#fafafa',
+    transition: 'all 0.2s',
+    color: '#333',
+    boxSizing: 'border-box' as const,
+  });
+
+  if (loading) {
+    return (
+      <AdminLayout title="Categories">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 0', color: '#bbb' }}>
+          <Loader size={24} style={{ animation: 'spin 1s linear infinite' }} />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
-    <AdminLayout title="Hi, Admin 👋">
+    <AdminLayout title="Categories">
       {/* Heading */}
-      <div style={{ marginBottom: '24px' }}>
-        <h2 className="text-2xl font-bold text-[#222]">Category Management</h2>
-        <p className="text-[#999] text-sm" style={{ marginTop: '4px' }}>
-          Manage product categories
-        </p>
+      <div style={{ marginBottom: '20px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#222', margin: '0 0 4px 0' }}>श्रेणी प्रबंधन</h2>
+        <p style={{ fontSize: '13px', color: '#999', margin: 0 }}>उत्पाद श्रेणियाँ प्रबंधित करें</p>
       </div>
 
+      {error && (
+        <div style={{ backgroundColor: 'rgba(220,38,38,0.08)', color: '#dc2626', fontSize: '13px', padding: '10px 14px', borderRadius: '10px', marginBottom: '14px' }}>
+          {error}
+        </div>
+      )}
+
       {/* Filter Bar */}
-      <div
-        className="bg-white rounded-2xl border border-[#f0f0f0] flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
-        style={{ padding: '16px 20px', marginBottom: '24px' }}
-      >
-        <div style={{ position: 'relative', flex: '1' }}>
-          <Search
-            size={16}
-            style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#ccc' }}
-          />
+      <div style={{
+        backgroundColor: '#fff', borderRadius: '14px', border: '1px solid #f0f0f0',
+        padding: '14px 16px', marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center',
+      }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: '160px' }}>
+          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#ccc' }} />
           <input
             type="text"
-            placeholder="Search categories..."
+            placeholder="श्रेणियाँ खोजें..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: '100%', paddingLeft: '40px', paddingRight: '16px', paddingTop: '10px', paddingBottom: '10px', border: '1px solid #eee', borderRadius: '8px', fontSize: '14px', outline: 'none', backgroundColor: '#fff', color: '#333' }}
+            style={{ width: '100%', paddingLeft: '38px', paddingRight: '14px', paddingTop: '10px', paddingBottom: '10px', border: '1px solid #eee', borderRadius: '10px', fontSize: '13px', outline: 'none', backgroundColor: '#fafafa', color: '#333', boxSizing: 'border-box' }}
           />
         </div>
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          style={{ padding: '10px 16px', border: '1px solid #eee', borderRadius: '8px', fontSize: '14px', outline: 'none', color: '#555', backgroundColor: '#fff' }}
-        >
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
         <button
           onClick={openNew}
-          className="hover:bg-[#c0392b] transition-colors"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#d35400', color: '#fff', padding: '10px 24px', borderRadius: '8px', fontSize: '14px', fontWeight: '600', whiteSpace: 'nowrap' }}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            backgroundColor: '#d35400', color: '#fff', padding: '10px 18px', borderRadius: '10px',
+            fontSize: '13px', fontWeight: '600', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer',
+          }}
         >
           <Plus size={16} />
-          Add Category
+          श्रेणी जोड़ें
         </button>
       </div>
 
-      {/* Categories Table */}
-      <div className="bg-white rounded-2xl border border-[#f0f0f0] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#f0f0f0]">
-                <th className="text-left text-[11px] font-semibold text-[#aaa] uppercase tracking-wider" style={{ padding: '14px 24px' }}>
-                  Name
-                </th>
-                <th className="text-left text-[11px] font-semibold text-[#aaa] uppercase tracking-wider hidden md:table-cell" style={{ padding: '14px 16px' }}>
-                  Description
-                </th>
-                <th className="text-left text-[11px] font-semibold text-[#aaa] uppercase tracking-wider" style={{ padding: '14px 16px' }}>
-                  Status
-                </th>
-                <th className="text-left text-[11px] font-semibold text-[#aaa] uppercase tracking-wider hidden sm:table-cell" style={{ padding: '14px 16px' }}>
-                  Products
-                </th>
-                <th className="text-right text-[11px] font-semibold text-[#aaa] uppercase tracking-wider" style={{ padding: '14px 24px' }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((cat) => (
-                <tr
-                  key={cat.id}
-                  className="border-b border-[#f8f8f8] hover:bg-[#fafafa] transition-colors"
-                >
-                  <td style={{ padding: '16px 24px' }}>
-                    <div className="flex items-center" style={{ gap: '14px' }}>
-                      <img
-                        src={cat.image}
-                        alt=""
-                        className="rounded-lg object-cover"
-                        style={{ width: '44px', height: '44px' }}
-                      />
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm text-[#333]">
-                          {cat.name}
-                        </p>
-                        <p className="text-xs text-[#bbb] md:hidden" style={{ marginTop: '2px' }}>
-                          {cat.description.length > 30 ? cat.description.slice(0, 30) + '...' : cat.description || '—'}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="hidden md:table-cell" style={{ padding: '16px' }}>
-                    <span className="text-sm text-[#888]">
-                      {cat.description.length > 50 ? cat.description.slice(0, 50) + '...' : cat.description || '—'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '16px' }}>
-                    <span className="inline-block text-xs font-medium px-3 py-1 rounded-full bg-emerald-50 text-emerald-600">
-                      Active
-                    </span>
-                  </td>
-                  <td className="hidden sm:table-cell" style={{ padding: '16px' }}>
-                    <span className="text-sm font-medium text-[#555]">
-                      {sarees.filter((s) => s.category === cat.id).length} products
-                    </span>
-                  </td>
-                  <td style={{ padding: '16px 24px' }}>
-                    <div className="flex items-center justify-end" style={{ gap: '6px' }}>
-                      <button
-                        onClick={() => setViewCat(cat)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg text-[#bbb] hover:text-[#d35400] hover:bg-orange-50 transition-colors"
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button
-                        onClick={() => openEdit(cat.id)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg text-[#bbb] hover:text-blue-500 hover:bg-blue-50 transition-colors"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button className="w-8 h-8 flex items-center justify-center rounded-lg text-[#bbb] hover:text-red-500 hover:bg-red-50 transition-colors">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {filtered.length === 0 && (
-          <div className="text-center text-[#bbb] text-sm" style={{ padding: '48px 0' }}>
-            No categories found
+      {/* Categories Grid */}
+      <style>{`
+        #cat-cards { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media (min-width: 640px) { #cat-cards { grid-template-columns: 1fr 1fr; } }
+      `}</style>
+      <div id="cat-cards">
+        {filtered.map((cat) => (
+          <div key={cat._id} style={{
+            backgroundColor: '#fff', borderRadius: '14px', border: '1px solid #f0f0f0',
+            overflow: 'hidden', display: 'flex', gap: '14px', padding: '14px', alignItems: 'center',
+          }}>
+            {cat.image ? (
+              <img src={cat.image} alt={cat.name} style={{ width: '56px', height: '56px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 }} />
+            ) : (
+              <div style={{ width: '56px', height: '56px', borderRadius: '12px', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Grid3X3 size={20} style={{ color: '#ccc' }} />
+              </div>
+            )}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '4px' }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: '#222', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat.name}</p>
+                <span style={{ flexShrink: 0, fontSize: '10px', fontWeight: '600', padding: '3px 8px', borderRadius: '20px', backgroundColor: 'rgba(5,150,105,0.08)', color: '#059669' }}>सक्रिय</span>
+              </div>
+              <p style={{ fontSize: '11px', color: '#999', margin: '0 0 6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {cat.description || 'कोई विवरण नहीं'}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '11px', color: '#bbb' }}>{cat.count || 0} उत्पाद</span>
+                <div style={{ display: 'flex', gap: '2px' }}>
+                  <div onClick={() => setViewCat(cat)} style={{ width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#bbb' }}>
+                    <Eye size={15} />
+                  </div>
+                  <div onClick={() => openEdit(cat._id)} style={{ width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#bbb' }}>
+                    <Pencil size={15} />
+                  </div>
+                  <div
+                    onClick={() => !deleting && handleDelete(cat._id)}
+                    style={{ width: '30px', height: '30px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: deleting === cat._id ? '#dc2626' : '#bbb', opacity: deleting === cat._id ? 0.5 : 1 }}
+                  >
+                    <Trash2 size={15} />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        ))}
       </div>
+
+      {filtered.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '48px 0', color: '#bbb', fontSize: '13px' }}>
+          <Grid3X3 size={32} style={{ color: '#ddd', margin: '0 auto 8px' }} />
+          कोई श्रेणी नहीं मिली
+        </div>
+      )}
 
       {/* View Category Modal */}
       {viewCat && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setViewCat(null)}
-          />
-          <div className="relative bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
-            {/* Image */}
-            <div className="relative h-48">
-              <img
-                src={viewCat.image}
-                alt={viewCat.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <button
-                onClick={() => setViewCat(null)}
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 text-[#555] hover:bg-white transition-colors"
-              >
-                <X size={16} />
-              </button>
-              <div className="absolute bottom-4 left-5">
-                <h3 className="text-white text-xl font-bold">{viewCat.name}</h3>
-              </div>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+          <div onClick={() => setViewCat(null)} style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
+          <div style={{ position: 'relative', backgroundColor: '#fff', borderRadius: '20px 20px 0 0', width: '100%', maxWidth: '480px', boxShadow: '0 -4px 30px rgba(0,0,0,0.15)' }}>
+            <div style={{ padding: '12px 0 0', textAlign: 'center' }}>
+              <div style={{ width: '36px', height: '4px', backgroundColor: '#e0e0e0', borderRadius: '2px', margin: '0 auto' }} />
             </div>
-            {/* Info */}
-            <div style={{ padding: '24px' }}>
-              <div className="flex items-center justify-between" style={{ marginBottom: '16px' }}>
-                <span className="inline-block text-xs font-medium px-3 py-1 rounded-full bg-emerald-50 text-emerald-600">
-                  Active
-                </span>
-                <span className="text-sm font-medium text-[#888]">
-                  {sarees.filter((s) => s.category === viewCat.id).length} products
-                </span>
+            {viewCat.image ? (
+              <div style={{ position: 'relative', margin: '14px 20px 0', borderRadius: '14px', overflow: 'hidden', height: '180px' }}>
+                <img src={viewCat.image} alt={viewCat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)' }} />
+                <div onClick={() => setViewCat(null)} style={{ position: 'absolute', top: '10px', right: '10px', width: '30px', height: '30px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <X size={14} style={{ color: '#555' }} />
+                </div>
+                <h3 style={{ position: 'absolute', bottom: '14px', left: '16px', fontSize: '18px', fontWeight: '700', color: '#fff', margin: 0 }}>{viewCat.name}</h3>
               </div>
-              <p className="text-sm text-[#777] leading-relaxed">
-                {viewCat.description || 'No description available.'}
+            ) : (
+              <div style={{ padding: '14px 20px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#222', margin: 0 }}>{viewCat.name}</h3>
+                <div onClick={() => setViewCat(null)} style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <X size={14} style={{ color: '#555' }} />
+                </div>
+              </div>
+            )}
+            <div style={{ padding: '16px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '600', padding: '4px 10px', borderRadius: '20px', backgroundColor: 'rgba(5,150,105,0.08)', color: '#059669' }}>सक्रिय</span>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: '#888' }}>{viewCat.count || 0} उत्पाद</span>
+              </div>
+              <p style={{ fontSize: '13px', color: '#777', lineHeight: '1.7', margin: 0 }}>
+                {viewCat.description || 'कोई विवरण उपलब्ध नहीं।'}
               </p>
-              <div className="flex gap-3" style={{ marginTop: '24px' }}>
-                <button
-                  onClick={() => {
-                    setViewCat(null);
-                    openEdit(viewCat.id);
-                  }}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#d35400] hover:bg-[#c0392b] text-white py-2.5 rounded-lg text-sm font-semibold transition-colors"
-                >
-                  <Pencil size={14} />
-                  Edit Category
-                </button>
-                <button
-                  onClick={() => setViewCat(null)}
-                  className="flex-1 flex items-center justify-center py-2.5 border border-[#eee] rounded-lg text-sm font-medium text-[#666] hover:bg-[#fafafa] transition-colors"
-                >
-                  Close
-                </button>
-              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', padding: '0 20px 24px' }}>
+              <button onClick={() => { setViewCat(null); openEdit(viewCat._id); }} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: '#d35400', color: '#fff', padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: '600', border: 'none', cursor: 'pointer' }}>
+                <Pencil size={15} /> श्रेणी संपादित करें
+              </button>
+              <button onClick={() => setViewCat(null)} style={{ padding: '12px 20px', border: '1px solid #eee', borderRadius: '12px', fontSize: '14px', fontWeight: '500', color: '#666', backgroundColor: '#fff', cursor: 'pointer' }}>
+                बंद करें
+              </button>
             </div>
           </div>
         </div>
@@ -241,85 +278,83 @@ export default function AdminCategories() {
 
       {/* Add/Edit Category Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setShowModal(false)}
-          />
-          <div className="relative bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
-            <div
-              className="flex items-center justify-between border-b border-[#f0f0f0]"
-              style={{ padding: '18px 24px' }}
-            >
-              <h3 className="text-lg font-bold text-[#222]">
-                {editId ? 'Edit Category' : 'Add Category'}
-              </h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-lg text-[#bbb] hover:text-[#333] hover:bg-[#f5f5f5] transition-colors"
-              >
-                <X size={20} />
-              </button>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+          <div onClick={() => setShowModal(false)} style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)' }} />
+          <div style={{ position: 'relative', backgroundColor: '#fff', borderRadius: '20px 20px 0 0', width: '100%', maxWidth: '480px', boxShadow: '0 -4px 30px rgba(0,0,0,0.15)' }}>
+            <div style={{ padding: '12px 0 0', textAlign: 'center' }}>
+              <div style={{ width: '36px', height: '4px', backgroundColor: '#e0e0e0', borderRadius: '2px', margin: '0 auto' }} />
             </div>
-
-            <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
-              <div>
-                <label className="block text-sm font-medium text-[#333]" style={{ marginBottom: '8px' }}>
-                  Category Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-3 border border-[#eee] rounded-lg text-sm focus:outline-none focus:border-[#d35400]/30 bg-white text-[#333] placeholder-[#bbb]"
-                  placeholder="सिल्क साड़ी"
-                />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px 14px', borderBottom: '1px solid #f0f0f0' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#222', margin: 0 }}>
+                {editId ? 'श्रेणी संपादित करें' : 'श्रेणी जोड़ें'}
+              </h3>
+              <div onClick={() => setShowModal(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                <X size={16} style={{ color: '#888' }} />
               </div>
-
-              <div style={{ marginTop: '20px' }}>
-                <label className="block text-sm font-medium text-[#333]" style={{ marginBottom: '8px' }}>
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  className="w-full px-4 py-3 border border-[#eee] rounded-lg text-sm focus:outline-none focus:border-[#d35400]/30 bg-white text-[#333] placeholder-[#bbb] resize-none"
-                  placeholder="शुद्ध सिल्क से बनी साड़ियाँ"
-                />
-              </div>
-
-              <div style={{ marginTop: '20px' }}>
-                <label className="block text-sm font-medium text-[#333]" style={{ marginBottom: '8px' }}>
-                  Category Image
-                </label>
-                <div className="border-2 border-dashed border-[#eee] rounded-lg text-center hover:border-[#d35400]/30 transition-colors cursor-pointer" style={{ padding: '32px' }}>
-                  <p className="text-[#bbb] text-sm">
-                    Click to upload or drag & drop
-                  </p>
+            </div>
+            <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '6px' }}>श्रेणी का नाम</label>
+                  <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} onFocus={() => setFocusedField('name')} onBlur={() => setFocusedField('')} placeholder="सिल्क साड़ी" style={inputStyle('name')} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '6px' }}>विवरण</label>
+                  <textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} onFocus={() => setFocusedField('desc')} onBlur={() => setFocusedField('')} placeholder="शुद्ध सिल्क से बनी साड़ियाँ" style={{ ...inputStyle('desc'), resize: 'none' as const }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '6px' }}>श्रेणी तस्वीर</label>
+                  {form.image ? (
+                    <div style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '12px', overflow: 'hidden' }}>
+                      <img src={form.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button type="button" onClick={() => setForm({ ...form, image: '' })} style={{ position: 'absolute', top: '4px', right: '4px', width: '22px', height: '22px', backgroundColor: 'rgba(239,68,68,0.9)', color: '#fff', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <label style={{ display: 'block', border: '2px dashed #eee', borderRadius: '12px', padding: '28px', textAlign: 'center', cursor: 'pointer', opacity: uploading ? 0.5 : 1 }}>
+                      <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploading} />
+                      <p style={{ fontSize: '12px', color: '#bbb', margin: 0 }}>{uploading ? 'अपलोड हो रहा है...' : 'अपलोड करने के लिए क्लिक करें'}</p>
+                    </label>
+                  )}
                 </div>
               </div>
-
-              <div className="flex gap-3" style={{ marginTop: '28px' }}>
-                <button
-                  type="submit"
-                  className="flex-1 bg-[#d35400] hover:bg-[#c0392b] text-white font-semibold py-3 rounded-lg text-sm transition-colors"
-                >
-                  {editId ? 'Update' : 'Add Category'}
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button type="submit" disabled={saving} style={{ flex: 1, backgroundColor: '#d35400', color: '#fff', fontWeight: '600', padding: '12px', borderRadius: '12px', fontSize: '14px', border: 'none', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+                  {saving ? 'सहेजा जा रहा है...' : editId ? 'अपडेट करें' : 'श्रेणी जोड़ें'}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 border border-[#eee] text-[#666] font-medium py-3 rounded-lg text-sm hover:bg-[#fafafa] transition-colors"
-                >
-                  Cancel
+                <button type="button" onClick={() => setShowModal(false)} style={{ flex: 1, border: '1px solid #eee', borderRadius: '12px', padding: '12px', fontSize: '14px', fontWeight: '500', color: '#666', backgroundColor: '#fff', cursor: 'pointer' }}>
+                  रद्द करें
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+      {/* Toast Notification */}
+      {toast && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 100,
+          backgroundColor: toast.type === 'success' ? '#059669' : '#dc2626',
+          color: '#fff',
+          padding: '12px 20px',
+          borderRadius: '12px',
+          fontSize: '13px',
+          fontWeight: '600',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          animation: 'slideIn 0.3s ease',
+        }}>
+          <span>{toast.type === 'success' ? '✓' : '✕'}</span>
+          {toast.message}
+        </div>
+      )}
+      <style>{`@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`}</style>
     </AdminLayout>
   );
 }

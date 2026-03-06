@@ -1,104 +1,359 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [btnHovered, setBtnHovered] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isAuthenticated) navigate('/admin/dashboard', { replace: true });
+  }, [isAuthenticated, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/admin/dashboard');
+    setError('');
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate('/admin/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-[380px]">
-          <div className="text-center mb-14">
-            <h1 className="text-[38px] font-bold text-[#2d2d2d] leading-tight">
-              Welcome Back{' '}
-              <span className="inline-block">👋</span>
+    <div style={{ minHeight: '100vh', display: 'flex', backgroundColor: '#0a0a0a' }}>
+
+      {/* Left Side - Branded Visual */}
+      <style>{`
+        #login-left { display: none; }
+        @media (min-width: 1024px) { #login-left { display: flex; } }
+      `}</style>
+      <div
+        id="login-left"
+        style={{
+          flex: 1,
+          position: 'relative',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Background Image */}
+        <img
+          src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800"
+          alt="Nagpur Wala Sarees"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.92) 100%)',
+        }} />
+
+        {/* Top Logo Badge */}
+        <div style={{
+          position: 'absolute',
+          top: '32px',
+          left: '32px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          backgroundColor: 'rgba(255,255,255,0.08)',
+          backdropFilter: 'blur(12px)',
+          padding: '8px 16px 8px 8px',
+          borderRadius: '50px',
+          border: '1px solid rgba(212,175,55,0.2)',
+        }}>
+          <img
+            src="/logo.jpeg"
+            alt="Logo"
+            style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #D4AF37' }}
+          />
+          <span style={{ fontSize: '14px', fontWeight: '700', color: '#D4AF37', fontFamily: 'Noto Serif Devanagari, serif' }}>
+            नागपुर वाला
+          </span>
+        </div>
+
+        {/* Bottom Content */}
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          padding: '48px 40px',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '16px',
+          }}>
+            <div style={{ width: '28px', height: '1.5px', backgroundColor: '#D4AF37' }} />
+            <span style={{ fontSize: '11px', fontWeight: '600', color: '#D4AF37', letterSpacing: '2px', textTransform: 'uppercase' }}>
+              एडमिन पैनल
+            </span>
+          </div>
+          <h2 style={{
+            fontSize: '28px',
+            fontWeight: '700',
+            color: '#fff',
+            lineHeight: '1.3',
+            margin: '0 0 12px',
+          }}>
+            जहाँ परंपरा<br />मिलती है फैशन से।
+          </h2>
+          <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', lineHeight: '1.7', maxWidth: '360px' }}>
+            अपना स्टोर प्रबंधित करें, उत्पाद जोड़ें, और पूरे भारत में ग्राहकों से जुड़ें।
+          </p>
+        </div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 24px',
+        background: 'linear-gradient(180deg, #111 0%, #0a0a0a 50%, #111 100%)',
+      }}>
+        <div style={{ width: '100%', maxWidth: '380px' }}>
+
+          {/* Mobile Logo */}
+          <style>{`
+            #login-mobile-logo { display: flex; }
+            @media (min-width: 1024px) { #login-mobile-logo { display: none !important; } }
+          `}</style>
+          <div id="login-mobile-logo" style={{
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginBottom: '40px',
+          }}>
+            <img
+              src="/logo.jpeg"
+              alt="Logo"
+              style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '2px solid #D4AF37',
+                marginBottom: '12px',
+                boxShadow: '0 4px 20px rgba(212,175,55,0.2)',
+              }}
+            />
+            <span style={{ fontSize: '22px', fontWeight: '700', color: '#D4AF37', fontFamily: 'Noto Serif Devanagari, serif' }}>
+              नागपुर वाला
+            </span>
+          </div>
+
+          {/* Heading */}
+          <div style={{ marginBottom: '36px' }}>
+            <h1 style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#fff',
+              margin: '0 0 8px',
+              lineHeight: '1.2',
+            }}>
+              वापस स्वागत है
             </h1>
-            <p className="text-[#999] text-sm mt-3 leading-relaxed max-w-[260px] mx-auto">
-              Sign in to manage your Nagpur Wala store
+            <p style={{ fontSize: '14px', color: '#666', margin: 0, lineHeight: '1.6' }}>
+              अपने खाते में लॉगिन करें
             </p>
           </div>
 
-          <form onSubmit={handleSubmit}>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-5 py-[18px] border border-[#ddd] rounded-lg focus:outline-none focus:border-[#bbb] text-sm bg-white text-[#333] placeholder-[#bbb]"
-                placeholder="Enter your email"
-              />
+          {/* Error */}
+          {error && (
+            <div style={{
+              backgroundColor: 'rgba(220,38,38,0.1)',
+              border: '1px solid rgba(220,38,38,0.2)',
+              color: '#ef4444',
+              fontSize: '13px',
+              fontWeight: '500',
+              padding: '12px 16px',
+              borderRadius: '12px',
+              marginBottom: '20px',
+              textAlign: 'center',
+            }}>
+              {error}
+            </div>
+          )}
 
-              <div className="relative" style={{ marginTop: '24px' }}>
+          {/* Form */}
+          <form onSubmit={handleSubmit}>
+            {/* Email Field */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                ईमेल
+              </label>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#555',
+                }}>
+                  <Mail size={16} />
+                </div>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@nagpurwala.com"
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px 14px 44px',
+                    backgroundColor: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    color: '#fff',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = '#D4AF37'}
+                  onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                />
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div style={{ marginBottom: '28px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                पासवर्ड
+              </label>
+              <div style={{ position: 'relative' }}>
+                <div style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#555',
+                }}>
+                  <Lock size={16} />
+                </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-5 py-[18px] border border-[#ddd] rounded-lg focus:outline-none focus:border-[#bbb] text-sm pr-14 bg-white text-[#333] placeholder-[#bbb]"
-                  placeholder="Enter your password"
+                  placeholder="अपना पासवर्ड दर्ज करें"
+                  style={{
+                    width: '100%',
+                    padding: '14px 48px 14px 44px',
+                    backgroundColor: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    color: '#fff',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = '#D4AF37'}
+                  onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-[#ccc] hover:text-[#888]"
+                  style={{
+                    position: 'absolute',
+                    right: '16px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#555',
+                    padding: '4px',
+                    display: 'flex',
+                  }}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+            </div>
 
+            {/* Sign In Button */}
             <button
               type="submit"
-              style={{ marginTop: '40px' }}
-              className="w-full bg-gradient-to-r from-[#d35400] to-[#e67e22] text-white font-bold py-[18px] rounded-full text-sm uppercase tracking-widest shadow-[0_8px_30px_rgba(211,84,0,0.3)] hover:shadow-[0_8px_30px_rgba(211,84,0,0.5)] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              disabled={loading}
+              onMouseEnter={() => setBtnHovered(true)}
+              onMouseLeave={() => setBtnHovered(false)}
+              style={{
+                width: '100%',
+                padding: '15px 24px',
+                background: btnHovered
+                  ? 'linear-gradient(135deg, #D4AF37, #B8960C)'
+                  : 'linear-gradient(135deg, #B8960C, #9A7B0A)',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: '700',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                letterSpacing: '0.5px',
+                transition: 'all 0.3s',
+                boxShadow: btnHovered
+                  ? '0 8px 32px rgba(184,150,12,0.4)'
+                  : '0 4px 20px rgba(184,150,12,0.2)',
+                transform: btnHovered ? 'translateY(-1px)' : 'translateY(0)',
+              }}
             >
-              Sign In
+              {loading ? 'साइन इन हो रहा है...' : 'साइन इन'}
+              {!loading && <ArrowRight size={16} />}
             </button>
           </form>
 
-          <p className="text-center text-[#bbb] text-sm mt-8">
-            Forgot password?{' '}
-            <button className="text-[#444] font-semibold hover:underline">
-              Reset here
+          {/* Footer */}
+          <p style={{ textAlign: 'center', color: '#444', fontSize: '13px', marginTop: '28px' }}>
+            पासवर्ड भूल गए?{' '}
+            <button style={{
+              background: 'none',
+              border: 'none',
+              color: '#D4AF37',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontSize: '13px',
+            }}>
+              यहाँ रीसेट करें
             </button>
           </p>
-        </div>
-      </div>
 
-      {/* Right Side - Branded Image */}
-      <div className="hidden lg:flex flex-1 items-center justify-center p-8">
-        <div className="relative w-full max-w-lg rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl">
-          <img
-            src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800"
-            alt="Nagpur Wala Sarees"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-maroon/90 via-maroon/30 to-transparent" />
-
-          {/* Logo Badge */}
-          <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-sm rounded-full px-5 py-2.5 shadow-lg">
-            <span className="font-heading text-base font-bold text-maroon">
-              नागपुर वाला
+          {/* Decorative Bottom */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            marginTop: '48px',
+          }}>
+            <div style={{ width: '20px', height: '1px', backgroundColor: '#333' }} />
+            <span style={{ fontSize: '11px', color: '#444', letterSpacing: '1px' }}>
+              नागपुर वाला एडमिन
             </span>
-          </div>
-
-          {/* Bottom Content */}
-          <div className="absolute bottom-0 left-0 right-0 p-8">
-            <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-3">
-              Where tradition meets fashion.
-            </h2>
-            <p className="text-white/80 text-sm leading-relaxed">
-              Nagpur Wala — Exclusive Sarees & Bridal Collection. Manage your store, add products, and connect with customers.
-            </p>
+            <div style={{ width: '20px', height: '1px', backgroundColor: '#333' }} />
           </div>
         </div>
       </div>

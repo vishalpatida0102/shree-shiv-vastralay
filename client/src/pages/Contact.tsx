@@ -1,14 +1,23 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, MessageCircle, Instagram, Clock, Send, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Mail, Instagram, Clock, Send, ExternalLink, Star, CheckCircle } from 'lucide-react';
+import SEO from '../components/ui/SEO';
 import PageTransition from '../components/animations/PageTransition';
 import ScrollReveal from '../components/animations/ScrollReveal';
 import { shopInfo } from '../data/dummyData';
+import { reviewsApi } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 export default function Contact() {
+  const { showToast } = useToast();
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
   const [focusedField, setFocusedField] = useState('');
   const [submitHover, setSubmitHover] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ name: '', location: '', rating: 5, message: '' });
+  const [reviewHover, setReviewHover] = useState(false);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewSaving, setReviewSaving] = useState(false);
+  const [reviewError, setReviewError] = useState('');
 
   const whatsappUrl = `https://wa.me/${shopInfo.whatsapp.replace('+', '')}?text=${encodeURIComponent('नमस्ते! मुझे साड़ी के बारे में जानकारी चाहिए।')}`;
 
@@ -19,12 +28,14 @@ export default function Contact() {
       `https://wa.me/${shopInfo.whatsapp.replace('+', '')}?text=${encodeURIComponent(msg)}`,
       '_blank'
     );
+    showToast('WhatsApp पर संदेश भेजा जा रहा है!');
+    setForm({ name: '', phone: '', message: '' });
   };
 
   const inputStyle = (field: string): React.CSSProperties => ({
     width: '100%',
     padding: '13px 14px',
-    border: focusedField === field ? '1.5px solid #800020' : '1.5px solid #eee',
+    border: focusedField === field ? '1.5px solid #B8960C' : '1.5px solid #eee',
     borderRadius: '12px',
     fontSize: '13px',
     outline: 'none',
@@ -36,6 +47,7 @@ export default function Contact() {
 
   return (
     <PageTransition>
+      <SEO title="संपर्क करें" description="नागपुर वाला से संपर्क करें। WhatsApp, फ़ोन या ईमेल — हम आपकी मदद के लिए तैयार हैं।" />
       <div style={{ paddingTop: '76px', paddingBottom: '100px', minHeight: '100vh' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 16px' }}>
 
@@ -92,7 +104,7 @@ export default function Contact() {
                 boxShadow: '0 4px 14px rgba(37,211,102,0.25)',
               }}
             >
-              <MessageCircle size={18} fill="white" />
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               WhatsApp
             </a>
 
@@ -105,14 +117,14 @@ export default function Contact() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                backgroundColor: '#800020',
+                backgroundColor: '#B8960C',
                 color: '#fff',
                 fontWeight: '600',
                 padding: '14px 10px',
                 borderRadius: '14px',
                 fontSize: '13px',
                 textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(128,0,32,0.2)',
+                boxShadow: '0 4px 14px rgba(184,150,12,0.2)',
               }}
             >
               <Phone size={18} />
@@ -168,13 +180,13 @@ export default function Contact() {
                     width: '40px',
                     height: '40px',
                     borderRadius: '12px',
-                    backgroundColor: 'rgba(128,0,32,0.06)',
+                    backgroundColor: 'rgba(184,150,12,0.06)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <MapPin size={18} style={{ color: '#800020' }} />
+                    <MapPin size={18} style={{ color: '#B8960C' }} />
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>पता</p>
@@ -190,22 +202,22 @@ export default function Contact() {
                     width: '40px',
                     height: '40px',
                     borderRadius: '12px',
-                    backgroundColor: 'rgba(128,0,32,0.06)',
+                    backgroundColor: 'rgba(184,150,12,0.06)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <Phone size={18} style={{ color: '#800020' }} />
+                    <Phone size={18} style={{ color: '#B8960C' }} />
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>फ़ोन</p>
                     <div style={{ display: 'flex', gap: '12px' }}>
-                      <a href={`tel:${shopInfo.phone}`} style={{ fontSize: '13px', color: '#800020', textDecoration: 'none', fontWeight: '500' }}>
+                      <a href={`tel:${shopInfo.phone}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
                         7999665102
                       </a>
                       <span style={{ color: '#ddd' }}>|</span>
-                      <a href={`tel:${shopInfo.phone2}`} style={{ fontSize: '13px', color: '#800020', textDecoration: 'none', fontWeight: '500' }}>
+                      <a href={`tel:${shopInfo.phone2}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
                         9752873734
                       </a>
                     </div>
@@ -220,17 +232,17 @@ export default function Contact() {
                     width: '40px',
                     height: '40px',
                     borderRadius: '12px',
-                    backgroundColor: 'rgba(128,0,32,0.06)',
+                    backgroundColor: 'rgba(184,150,12,0.06)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <Mail size={18} style={{ color: '#800020' }} />
+                    <Mail size={18} style={{ color: '#B8960C' }} />
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>ईमेल</p>
-                    <a href={`mailto:${shopInfo.email}`} style={{ fontSize: '13px', color: '#800020', textDecoration: 'none', fontWeight: '500' }}>
+                    <a href={`mailto:${shopInfo.email}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
                       {shopInfo.email}
                     </a>
                   </div>
@@ -244,13 +256,13 @@ export default function Contact() {
                     width: '40px',
                     height: '40px',
                     borderRadius: '12px',
-                    backgroundColor: 'rgba(128,0,32,0.06)',
+                    backgroundColor: 'rgba(184,150,12,0.06)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <Clock size={18} style={{ color: '#800020' }} />
+                    <Clock size={18} style={{ color: '#B8960C' }} />
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>समय</p>
@@ -299,7 +311,7 @@ export default function Contact() {
                   padding: '12px',
                   fontSize: '12px',
                   fontWeight: '600',
-                  color: '#800020',
+                  color: '#B8960C',
                   textDecoration: 'none',
                   borderTop: '1px solid #f5f5f5',
                 }}
@@ -397,7 +409,7 @@ export default function Contact() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      backgroundColor: submitHover ? '#600018' : '#800020',
+                      backgroundColor: submitHover ? '#9A7B0A' : '#B8960C',
                       color: '#fff',
                       fontWeight: '600',
                       padding: '14px',
@@ -406,7 +418,7 @@ export default function Contact() {
                       border: 'none',
                       cursor: 'pointer',
                       transition: 'all 0.2s',
-                      boxShadow: '0 4px 14px rgba(128,0,32,0.2)',
+                      boxShadow: '0 4px 14px rgba(184,150,12,0.2)',
                       transform: submitHover ? 'translateY(-1px)' : 'translateY(0)',
                       marginTop: '4px',
                     }}
@@ -416,6 +428,217 @@ export default function Contact() {
                   </button>
                 </div>
               </form>
+            </div>
+          </ScrollReveal>
+
+          {/* ═══════ Feedback / Review Form ═══════ */}
+          <ScrollReveal delay={0.2}>
+            <div style={{
+              backgroundColor: '#fff',
+              borderRadius: '16px',
+              padding: '24px 20px',
+              boxShadow: '0 1px 6px rgba(0,0,0,0.04)',
+              marginTop: '16px',
+            }}>
+              {reviewSubmitted ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  style={{ textAlign: 'center', padding: '32px 16px' }}
+                >
+                  <div style={{
+                    width: '56px', height: '56px', borderRadius: '50%',
+                    background: 'linear-gradient(135deg, rgba(5,150,105,0.1), rgba(5,150,105,0.05))',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    margin: '0 auto 14px',
+                  }}>
+                    <CheckCircle size={28} style={{ color: '#059669' }} />
+                  </div>
+                  <h3 className="font-heading" style={{ fontSize: '18px', fontWeight: '700', color: '#2D2D2D', margin: '0 0 6px' }}>
+                    धन्यवाद!
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#888', lineHeight: '1.6', margin: '0 0 16px' }}>
+                    आपका फीडबैक सफलतापूर्वक जमा हो गया है। एडमिन अप्रूव करने के बाद यह दिखाई देगा।
+                  </p>
+                  <button
+                    onClick={() => {
+                      setReviewSubmitted(false);
+                      setReviewForm({ name: '', location: '', rating: 5, message: '' });
+                    }}
+                    style={{
+                      fontSize: '13px', fontWeight: '600', color: '#B8960C',
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      textDecoration: 'underline',
+                    }}
+                  >
+                    एक और फीडबैक दें
+                  </button>
+                </motion.div>
+              ) : (
+                <>
+                  <div style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                      <div style={{
+                        width: '32px', height: '32px', borderRadius: '10px',
+                        background: 'linear-gradient(135deg, #D4AF37, #c49a20)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Star size={16} style={{ color: '#fff', fill: '#fff' }} />
+                      </div>
+                      <div>
+                        <h3 className="font-heading" style={{ fontSize: '18px', fontWeight: '700', color: '#2D2D2D', margin: 0 }}>
+                          अपना फीडबैक दें
+                        </h3>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#999', margin: '6px 0 0' }}>
+                      आपकी राय हमारे लिए बहुत महत्वपूर्ण है
+                    </p>
+                  </div>
+
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    setReviewSaving(true);
+                    setReviewError('');
+                    try {
+                      await reviewsApi.create(reviewForm);
+                      setReviewSubmitted(true);
+                      showToast('आपकी समीक्षा सफलतापूर्वक भेजी गई!');
+                    } catch (err: any) {
+                      setReviewError(err.message || 'Failed to submit review');
+                      showToast('समीक्षा भेजने में विफल', 'error');
+                    } finally {
+                      setReviewSaving(false);
+                    }
+                  }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      {/* Name */}
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '6px' }}>
+                          आपका नाम
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={reviewForm.name}
+                          onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
+                          onFocus={() => setFocusedField('rname')}
+                          onBlur={() => setFocusedField('')}
+                          placeholder="अपना नाम लिखें"
+                          style={inputStyle('rname')}
+                        />
+                      </div>
+
+                      {/* Location */}
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '6px' }}>
+                          शहर
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={reviewForm.location}
+                          onChange={(e) => setReviewForm({ ...reviewForm, location: e.target.value })}
+                          onFocus={() => setFocusedField('rloc')}
+                          onBlur={() => setFocusedField('')}
+                          placeholder="जैसे: नागपुर, इंदौर"
+                          style={inputStyle('rloc')}
+                        />
+                      </div>
+
+                      {/* Star Rating */}
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '8px' }}>
+                          रेटिंग
+                        </label>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <div
+                              key={star}
+                              onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                              style={{
+                                cursor: 'pointer',
+                                transition: 'transform 0.15s',
+                                transform: reviewForm.rating >= star ? 'scale(1.1)' : 'scale(1)',
+                              }}
+                            >
+                              <Star
+                                size={28}
+                                style={{
+                                  color: reviewForm.rating >= star ? '#D4AF37' : '#ddd',
+                                  fill: reviewForm.rating >= star ? '#D4AF37' : 'none',
+                                  transition: 'all 0.15s',
+                                }}
+                              />
+                            </div>
+                          ))}
+                          <span style={{ fontSize: '13px', color: '#888', marginLeft: '8px', alignSelf: 'center' }}>
+                            {reviewForm.rating}/5
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Message */}
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#555', marginBottom: '6px' }}>
+                          आपका अनुभव
+                        </label>
+                        <textarea
+                          required
+                          rows={3}
+                          value={reviewForm.message}
+                          onChange={(e) => setReviewForm({ ...reviewForm, message: e.target.value })}
+                          onFocus={() => setFocusedField('rmsg')}
+                          onBlur={() => setFocusedField('')}
+                          placeholder="अपना अनुभव बताएं..."
+                          style={{
+                            ...inputStyle('rmsg'),
+                            resize: 'none' as const,
+                          }}
+                        />
+                      </div>
+
+                      {/* Error */}
+                      {reviewError && (
+                        <div style={{ backgroundColor: 'rgba(220,38,38,0.08)', color: '#dc2626', padding: '10px 14px', borderRadius: '10px', fontSize: '13px' }}>{reviewError}</div>
+                      )}
+
+                      {/* Submit */}
+                      <button
+                        type="submit"
+                        disabled={reviewSaving}
+                        onMouseEnter={() => setReviewHover(true)}
+                        onMouseLeave={() => setReviewHover(false)}
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          background: reviewHover
+                            ? 'linear-gradient(135deg, #9a7a20, #D4AF37)'
+                            : 'linear-gradient(135deg, #D4AF37, #c49a20)',
+                          color: '#fff',
+                          fontWeight: '600',
+                          padding: '14px',
+                          borderRadius: '12px',
+                          fontSize: '14px',
+                          border: 'none',
+                          cursor: reviewSaving ? 'wait' : 'pointer',
+                          transition: 'all 0.2s',
+                          boxShadow: '0 4px 14px rgba(212,175,55,0.25)',
+                          transform: reviewHover ? 'translateY(-1px)' : 'translateY(0)',
+                          marginTop: '4px',
+                          opacity: reviewSaving ? 0.7 : 1,
+                        }}
+                      >
+                        <Star size={16} />
+                        {reviewSaving ? 'जमा हो रहा है...' : 'फीडबैक जमा करें'}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
             </div>
           </ScrollReveal>
 

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Heart } from 'lucide-react';
+import { useFavorites } from '../../hooks/useFavorites';
 
 const navLinks = [
   { name: 'होम', path: '/' },
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { count } = useFavorites();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -52,9 +54,23 @@ export default function Navbar() {
                 transition: 'opacity 0.3s, transform 0.3s',
                 pointerEvents: isScrolled ? 'auto' : 'none',
                 textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
               }}
             >
-              <span className="font-heading" style={{ fontSize: '20px', fontWeight: '700', color: '#800020' }}>
+              <img
+                src="/logo.jpeg"
+                alt="नागपुर वाला"
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '1.5px solid #D4AF37',
+                }}
+              />
+              <span className="font-heading" style={{ fontSize: '20px', fontWeight: '700', color: '#B8960C' }}>
                 नागपुर वाला
               </span>
             </Link>
@@ -69,12 +85,12 @@ export default function Navbar() {
                     position: 'relative',
                     fontSize: '14px',
                     fontWeight: '500',
-                    color: location.pathname === link.path ? '#800020' : '#2D2D2D',
+                    color: location.pathname === link.path ? '#B8960C' : '#2D2D2D',
                     textDecoration: 'none',
                     transition: 'color 0.2s',
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#800020'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = location.pathname === link.path ? '#800020' : '#2D2D2D'}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#B8960C'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = location.pathname === link.path ? '#B8960C' : '#2D2D2D'}
                 >
                   {link.name}
                   {location.pathname === link.path && (
@@ -88,11 +104,56 @@ export default function Navbar() {
               ))}
             </div>
 
+            {/* Favorites Icon - Desktop */}
+            <Link
+              to="/favorites"
+              className="hidden md:flex"
+              style={{
+                position: 'relative',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: location.pathname === '/favorites' ? 'rgba(184,150,12,0.1)' : 'transparent',
+                textDecoration: 'none',
+                transition: 'all 0.2s',
+              }}
+            >
+              <Heart
+                size={20}
+                style={{
+                  color: '#B8960C',
+                  fill: location.pathname === '/favorites' ? '#B8960C' : 'none',
+                }}
+              />
+              {count > 0 && (
+                <div style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '0px',
+                  width: '16px',
+                  height: '16px',
+                  borderRadius: '50%',
+                  backgroundColor: '#B8960C',
+                  color: '#fff',
+                  fontSize: '9px',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '2px solid #fff',
+                }}>
+                  {count > 9 ? '9+' : count}
+                </div>
+              )}
+            </Link>
+
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden"
-              style={{ padding: '8px', color: '#800020', background: 'none', border: 'none', cursor: 'pointer', zIndex: 60, position: 'relative' }}
+              style={{ padding: '8px', color: '#2D2D2D', background: 'none', border: 'none', cursor: 'pointer', zIndex: 60, position: 'relative' }}
               aria-label="मेनू"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -130,7 +191,7 @@ export default function Navbar() {
                 top: '20px',
                 right: '20px',
                 padding: '8px',
-                color: '#800020',
+                color: '#2D2D2D',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -140,8 +201,21 @@ export default function Navbar() {
             </button>
 
             {/* Brand */}
-            <div style={{ marginBottom: '40px', textAlign: 'center' }}>
-              <span className="font-heading" style={{ fontSize: '28px', fontWeight: '700', color: '#800020' }}>
+            <div style={{ marginBottom: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img
+                src="/logo.jpeg"
+                alt="नागपुर वाला"
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '2px solid #D4AF37',
+                  marginBottom: '12px',
+                  boxShadow: '0 4px 16px rgba(184,150,12,0.2)',
+                }}
+              />
+              <span className="font-heading" style={{ fontSize: '28px', fontWeight: '700', color: '#B8960C' }}>
                 नागपुर वाला
               </span>
               <p style={{ fontSize: '12px', color: '#999', marginTop: '6px', letterSpacing: '2px', textTransform: 'uppercase' }}>
@@ -172,8 +246,8 @@ export default function Navbar() {
                         fontWeight: isActive ? '600' : '500',
                         textAlign: 'center',
                         textDecoration: 'none',
-                        backgroundColor: isActive ? '#800020' : 'transparent',
-                        color: isActive ? '#fff' : '#2D2D2D',
+                        backgroundColor: isActive ? '#2D2D2D' : 'transparent',
+                        color: isActive ? '#D4AF37' : '#2D2D2D',
                         transition: 'all 0.2s',
                       }}
                     >
@@ -183,6 +257,48 @@ export default function Navbar() {
                 );
               })}
             </div>
+
+            {/* Favorites Link */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: navLinks.length * 0.06, duration: 0.3 }}
+              style={{ width: '100%', maxWidth: '280px', marginTop: '8px' }}
+            >
+              <Link
+                to="/favorites"
+                onClick={() => setIsOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '14px 24px',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: location.pathname === '/favorites' ? '600' : '500',
+                  textDecoration: 'none',
+                  backgroundColor: location.pathname === '/favorites' ? '#2D2D2D' : 'transparent',
+                  color: location.pathname === '/favorites' ? '#D4AF37' : '#2D2D2D',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <Heart size={18} style={{ fill: location.pathname === '/favorites' ? '#fff' : 'none' }} />
+                पसंदीदा
+                {count > 0 && (
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    backgroundColor: location.pathname === '/favorites' ? 'rgba(255,255,255,0.2)' : 'rgba(184,150,12,0.1)',
+                    color: location.pathname === '/favorites' ? '#D4AF37' : '#B8960C',
+                    padding: '2px 8px',
+                    borderRadius: '20px',
+                  }}>
+                    {count}
+                  </span>
+                )}
+              </Link>
+            </motion.div>
 
             {/* Bottom tagline */}
             <p className="font-heading" style={{ position: 'absolute', bottom: '32px', fontSize: '13px', color: '#D4AF37', textAlign: 'center' }}>

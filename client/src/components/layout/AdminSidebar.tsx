@@ -1,62 +1,95 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, Grid3X3, LogOut, Menu, X, ChevronLeft } from 'lucide-react';
-import { useState } from 'react';
+import { LayoutDashboard, ShoppingBag, Grid3X3, MessageSquare, LogOut, ChevronLeft } from 'lucide-react';
+import { useReviews } from '../../hooks/useReviews';
+import { useAuth } from '../../context/AuthContext';
 
 const menuItems = [
-  { name: 'Home', path: '/admin/dashboard', icon: LayoutDashboard, color: 'text-orange-500' },
-  { name: 'Products', path: '/admin/products', icon: ShoppingBag, color: 'text-blue-500' },
-  { name: 'Categories', path: '/admin/categories', icon: Grid3X3, color: 'text-emerald-500' },
+  { name: 'डैशबोर्ड', path: '/admin/dashboard', icon: LayoutDashboard, color: '#d35400', bg: 'rgba(211,84,0,0.08)' },
+  { name: 'उत्पाद', path: '/admin/products', icon: ShoppingBag, color: '#2563eb', bg: 'rgba(37,99,235,0.08)' },
+  { name: 'श्रेणियाँ', path: '/admin/categories', icon: Grid3X3, color: '#059669', bg: 'rgba(5,150,105,0.08)' },
+  { name: 'समीक्षाएँ', path: '/admin/reviews', icon: MessageSquare, color: '#d97706', bg: 'rgba(217,119,6,0.08)' },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const { pendingCount } = useReviews();
+  const { logout } = useAuth();
 
   return (
     <>
-      {/* Mobile Toggle */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-lg shadow-md"
-      >
-        {isOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
       {/* Overlay */}
       {isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/40 z-40"
-          onClick={() => setIsOpen(false)}
+          onClick={onClose}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            zIndex: 40,
+          }}
+          className="lg:hidden"
         />
       )}
 
       {/* Sidebar */}
+      <style>{`
+        #admin-sidebar { transform: translateX(-100%); }
+        #admin-sidebar.open { transform: translateX(0); }
+        @media (min-width: 1024px) { #admin-sidebar { transform: translateX(0) !important; } }
+      `}</style>
       <aside
-        className={`fixed top-0 left-0 h-screen w-[250px] bg-white border-r border-[#f0f0f0] z-40 transform transition-transform duration-300 flex flex-col ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
-        style={{ minHeight: '100vh' }}
+        id="admin-sidebar"
+        className={isOpen ? 'open' : ''}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          height: '100vh',
+          width: '250px',
+          backgroundColor: '#fff',
+          borderRight: '1px solid #f0f0f0',
+          zIndex: 45,
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
         {/* Logo */}
-        <div
-          className="flex items-center justify-between border-b border-[#f0f0f0]"
-          style={{ padding: '18px 20px' }}
-        >
-          <div className="flex items-center gap-1.5">
-            <span className="text-[#d35400] font-bold text-lg">Nagpur</span>
-            <span className="text-[#999] font-normal text-lg">wala</span>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '20px',
+          borderBottom: '1px solid #f0f0f0',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <span style={{ color: '#d35400', fontWeight: '700', fontSize: '18px' }}>Nagpur</span>
+            <span style={{ color: '#999', fontWeight: '400', fontSize: '18px' }}>wala</span>
           </div>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="lg:hidden text-[#bbb] hover:text-[#666]"
+          <div
+            onClick={onClose}
+            className="lg:hidden"
+            style={{ cursor: 'pointer', color: '#bbb', display: 'flex', alignItems: 'center' }}
           >
             <ChevronLeft size={18} />
-          </button>
+          </div>
+        </div>
+
+        {/* Label */}
+        <div style={{ padding: '20px 20px 8px' }}>
+          <span style={{ fontSize: '10px', fontWeight: '600', color: '#bbb', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            मेनू
+          </span>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1" style={{ padding: '24px 12px 0' }}>
-          {menuItems.map((item, i) => {
+        <nav style={{ flex: 1, padding: '0 12px' }}>
+          {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
 
@@ -64,35 +97,61 @@ export default function AdminSidebar() {
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={() => setIsOpen(false)}
-                className={`flex items-center rounded-lg text-[14px] font-medium transition-all ${
-                  isActive
-                    ? `${item.color} bg-[#fff7f0]`
-                    : 'text-[#666] hover:bg-[#fafafa]'
-                }`}
+                onClick={onClose}
                 style={{
-                  padding: '12px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: '12px',
-                  marginTop: i > 0 ? '4px' : '0',
+                  padding: '11px 14px',
+                  borderRadius: '10px',
+                  fontSize: '14px',
+                  fontWeight: isActive ? '600' : '500',
+                  color: isActive ? item.color : '#666',
+                  backgroundColor: isActive ? item.bg : 'transparent',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s',
+                  marginBottom: '2px',
                 }}
               >
-                <Icon size={20} className={isActive ? item.color : 'text-[#aaa]'} />
-                {item.name}
+                <Icon size={20} style={{ color: isActive ? item.color : '#aaa' }} />
+                <span style={{ flex: 1 }}>{item.name}</span>
+                {item.path === '/admin/reviews' && pendingCount > 0 && (
+                  <span style={{
+                    fontSize: '10px', fontWeight: '700', minWidth: '18px', height: '18px',
+                    borderRadius: '20px', backgroundColor: '#d97706', color: '#fff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '0 5px',
+                  }}>
+                    {pendingCount}
+                  </span>
+                )}
               </Link>
             );
           })}
         </nav>
 
         {/* Sign Out */}
-        <div style={{ padding: '16px 12px' }} className="border-t border-[#f0f0f0]">
-          <Link
-            to="/admin"
-            className="flex items-center rounded-lg text-[14px] font-medium text-[#bbb] hover:text-[#888] hover:bg-[#fafafa] transition-colors"
-            style={{ padding: '12px 14px', gap: '12px' }}
+        <div style={{ padding: '16px 12px', borderTop: '1px solid #f0f0f0' }}>
+          <button
+            onClick={() => { logout(); onClose(); }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '11px 14px',
+              borderRadius: '10px',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#bbb',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              width: '100%',
+            }}
           >
             <LogOut size={20} />
-            Sign Out
-          </Link>
+            लॉगआउट
+          </button>
         </div>
       </aside>
     </>

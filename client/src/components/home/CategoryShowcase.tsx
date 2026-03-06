@@ -1,10 +1,23 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SectionHeading from '../ui/SectionHeading';
 import StaggerChildren, { staggerItem } from '../animations/StaggerChildren';
-import { categories } from '../../data/dummyData';
+import { categoriesApi } from '../../services/api';
+import { toCategory } from '../../services/helpers';
+import type { Category } from '../../types';
 
 export default function CategoryShowcase() {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    categoriesApi.getAll()
+      .then((cats) => setCategories(cats.map(toCategory)))
+      .catch(() => {});
+  }, []);
+
+  if (categories.length === 0) return null;
+
   return (
     <section style={{ padding: '48px 16px', maxWidth: '1200px', margin: '0 auto' }}>
       <SectionHeading

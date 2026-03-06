@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
 import type { Saree } from '../../types';
 import { staggerItem } from '../animations/StaggerChildren';
+import { useFavorites } from '../../hooks/useFavorites';
+import { useToast } from '../../context/ToastContext';
 
 interface SareeCardProps {
   saree: Saree;
@@ -11,7 +13,9 @@ interface SareeCardProps {
 
 export default function SareeCard({ saree }: SareeCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [liked, setLiked] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { showToast } = useToast();
+  const liked = isFavorite(saree.id);
 
   const discount = saree.originalPrice
     ? Math.round(((saree.originalPrice - saree.price) / saree.originalPrice) * 100)
@@ -31,7 +35,7 @@ export default function SareeCard({ saree }: SareeCardProps) {
             borderRadius: '12px',
             overflow: 'hidden',
             boxShadow: isHovered
-              ? '0 8px 28px rgba(128,0,32,0.12)'
+              ? '0 8px 28px rgba(184,150,12,0.15)'
               : '0 1px 6px rgba(0,0,0,0.06)',
             transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
             transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
@@ -67,8 +71,8 @@ export default function SareeCard({ saree }: SareeCardProps) {
             <div style={{ position: 'absolute', top: '8px', left: '8px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
               {saree.isNew && (
                 <span style={{
-                  background: 'linear-gradient(135deg, #800020, #a80030)',
-                  color: '#fff',
+                  background: 'linear-gradient(135deg, #2D2D2D, #3a3a3a)',
+                  color: '#D4AF37',
                   fontSize: '9px',
                   fontWeight: '700',
                   padding: '3px 9px',
@@ -97,7 +101,8 @@ export default function SareeCard({ saree }: SareeCardProps) {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setLiked(!liked);
+                toggleFavorite(saree.id);
+                showToast(liked ? 'पसंदीदा से हटाया गया' : 'पसंदीदा में जोड़ा गया', liked ? 'info' : 'success');
               }}
               style={{
                 position: 'absolute',
@@ -106,7 +111,7 @@ export default function SareeCard({ saree }: SareeCardProps) {
                 width: '30px',
                 height: '30px',
                 borderRadius: '50%',
-                backgroundColor: liked ? '#800020' : 'rgba(255,255,255,0.9)',
+                backgroundColor: liked ? '#B8960C' : 'rgba(255,255,255,0.9)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -118,7 +123,7 @@ export default function SareeCard({ saree }: SareeCardProps) {
               <Heart
                 size={14}
                 style={{
-                  color: liked ? '#fff' : '#800020',
+                  color: liked ? '#fff' : '#B8960C',
                   fill: liked ? '#fff' : 'none',
                 }}
               />
@@ -145,7 +150,7 @@ export default function SareeCard({ saree }: SareeCardProps) {
               style={{
                 fontSize: '13px',
                 fontWeight: '600',
-                color: isHovered ? '#800020' : '#2D2D2D',
+                color: isHovered ? '#B8960C' : '#2D2D2D',
                 lineHeight: '1.3',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -168,7 +173,7 @@ export default function SareeCard({ saree }: SareeCardProps) {
               <span style={{
                 fontSize: '15px',
                 fontWeight: '700',
-                color: '#800020',
+                color: '#B8960C',
               }}>
                 ₹{saree.price.toLocaleString('hi-IN')}
               </span>

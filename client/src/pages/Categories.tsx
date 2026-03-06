@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Loader2 } from 'lucide-react';
+import SEO from '../components/ui/SEO';
 import PageTransition from '../components/animations/PageTransition';
-import { categories, sarees } from '../data/dummyData';
+import { productsApi, categoriesApi } from '../services/api';
+import { toSaree, toCategory } from '../services/helpers';
+import type { Category, Saree } from '../types';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -14,9 +17,8 @@ const fadeUp = {
   }),
 };
 
-function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[0]; index: number; isLarge?: boolean }) {
+function CategoryCard({ cat, index, sareeCount, isLarge = false }: { cat: Category; index: number; sareeCount: number; isLarge?: boolean }) {
   const [hovered, setHovered] = useState(false);
-  const count = sarees.filter(s => s.category === cat.id).length;
 
   return (
     <motion.div
@@ -38,12 +40,11 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
           overflow: 'hidden',
           aspectRatio: isLarge ? '16/10' : '3/4',
           boxShadow: hovered
-            ? '0 12px 32px rgba(128,0,32,0.18)'
+            ? '0 12px 32px rgba(184,150,12,0.18)'
             : '0 2px 12px rgba(0,0,0,0.08)',
           transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
         }}>
-          {/* Image */}
           <img
             src={cat.image}
             alt={cat.name}
@@ -56,8 +57,6 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
               transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
           />
-
-          {/* Gradient overlay */}
           <div style={{
             position: 'absolute',
             inset: 0,
@@ -65,17 +64,13 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
               ? 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)'
               : 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.05) 100%)',
           }} />
-
-          {/* Maroon tint on hover */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            backgroundColor: 'rgba(128,0,32,0.15)',
+            backgroundColor: 'rgba(184,150,12,0.15)',
             opacity: hovered ? 1 : 0,
             transition: 'opacity 0.3s',
           }} />
-
-          {/* Count badge - top right */}
           <div style={{
             position: 'absolute',
             top: '12px',
@@ -90,11 +85,9 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
           }}>
             <Sparkles size={11} style={{ color: '#D4AF37' }} />
             <span style={{ fontSize: '11px', fontWeight: '600', color: '#fff' }}>
-              {count} साड़ियाँ
+              {sareeCount} साड़ियाँ
             </span>
           </div>
-
-          {/* Content */}
           <div style={{
             position: 'absolute',
             bottom: 0,
@@ -102,7 +95,6 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
             right: 0,
             padding: isLarge ? '24px' : '16px',
           }}>
-            {/* Category name */}
             <h3
               className="font-heading"
               style={{
@@ -115,8 +107,6 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
             >
               {cat.name}
             </h3>
-
-            {/* Description */}
             <p style={{
               fontSize: isLarge ? '13px' : '11px',
               color: 'rgba(255,255,255,0.75)',
@@ -132,8 +122,6 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
             }}>
               {cat.description}
             </p>
-
-            {/* CTA */}
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -169,11 +157,37 @@ function CategoryCard({ cat, index, isLarge = false }: { cat: typeof categories[
 }
 
 export default function Categories() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [sarees, setSarees] = useState<Saree[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([categoriesApi.getAll(), productsApi.getAll()])
+      .then(([cats, prods]) => {
+        setCategories(cats.map(toCategory));
+        setSarees(prods.map(toSaree));
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <PageTransition>
+        <div style={{ paddingTop: '100px', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Loader2 size={28} style={{ color: '#B8960C', animation: 'spin 1s linear infinite' }} />
+        </div>
+      </PageTransition>
+    );
+  }
+
   const heroCategory = categories[0];
   const restCategories = categories.slice(1);
 
+  const getSareeCount = (catId: string) => sarees.filter(s => s.category === catId).length;
+
   return (
     <PageTransition>
+      <SEO title="श्रेणियाँ" description="सिल्क, बनारसी, पैठणी, कॉटन और डिज़ाइनर — सभी श्रेणियों की साड़ियाँ देखें।" />
       <div style={{ paddingTop: '76px', paddingBottom: '100px', minHeight: '100vh' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
 
@@ -192,12 +206,7 @@ export default function Categories() {
             </div>
             <h1
               className="font-heading"
-              style={{
-                fontSize: '26px',
-                fontWeight: '700',
-                color: '#2D2D2D',
-                margin: '0 0 6px 0',
-              }}
+              style={{ fontSize: '26px', fontWeight: '700', color: '#2D2D2D', margin: '0 0 6px 0' }}
             >
               श्रेणियाँ
             </h1>
@@ -206,19 +215,21 @@ export default function Categories() {
             </p>
           </motion.div>
 
-          {/* Hero Category - Full width */}
-          <div style={{ marginBottom: '12px' }}>
-            <CategoryCard cat={heroCategory} index={0} isLarge />
-          </div>
+          {/* Hero Category */}
+          {heroCategory && (
+            <div style={{ marginBottom: '12px' }}>
+              <CategoryCard cat={heroCategory} index={0} sareeCount={getSareeCount(heroCategory.id)} isLarge />
+            </div>
+          )}
 
-          {/* Rest Categories - 2 column grid */}
+          {/* Rest Categories */}
           <style>{`
             #categories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
             @media (min-width: 768px) { #categories-grid { grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; } }
           `}</style>
           <div id="categories-grid">
             {restCategories.map((cat, i) => (
-              <CategoryCard key={cat.id} cat={cat} index={i + 1} />
+              <CategoryCard key={cat.id} cat={cat} index={i + 1} sareeCount={getSareeCount(cat.id)} />
             ))}
           </div>
 
@@ -238,7 +249,7 @@ export default function Categories() {
             }}
           >
             <p style={{ fontSize: '13px', color: '#888', marginBottom: '14px' }}>
-              सभी श्रेणियों में कुल <strong style={{ color: '#800020' }}>{sarees.length}+</strong> साड़ियाँ उपलब्ध हैं
+              सभी श्रेणियों में कुल <strong style={{ color: '#B8960C' }}>{sarees.length}+</strong> साड़ियाँ उपलब्ध हैं
             </p>
             <Link
               to="/sarees"
@@ -246,14 +257,14 @@ export default function Categories() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: '#800020',
+                backgroundColor: '#B8960C',
                 color: '#fff',
                 fontWeight: '600',
                 padding: '12px 28px',
                 borderRadius: '50px',
                 fontSize: '13px',
                 textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(128,0,32,0.25)',
+                boxShadow: '0 4px 14px rgba(184,150,12,0.25)',
               }}
             >
               सभी साड़ियाँ देखें

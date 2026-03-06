@@ -8,11 +8,23 @@ export default function Footer() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 20px 0' }}>
 
         {/* Top Section - Brand */}
-        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '36px' }}>
+          <img
+            src="/logo.jpeg"
+            alt={shopInfo.name}
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '1.5px solid #D4AF37',
+              marginBottom: '12px',
+            }}
+          />
           <h3 className="font-heading" style={{ fontSize: '28px', fontWeight: '700', color: '#D4AF37', marginBottom: '10px' }}>
             {shopInfo.name}
           </h3>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', maxWidth: '320px', margin: '0 auto', lineHeight: '1.7' }}>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', maxWidth: '320px', textAlign: 'center', lineHeight: '1.7' }}>
             {shopInfo.tagline}
           </p>
         </div>
@@ -105,6 +117,14 @@ export default function Footer() {
           <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px' }}>
             &copy; {new Date().getFullYear()} {shopInfo.name}। सभी अधिकार सुरक्षित।
           </p>
+          <Link
+            to="/admin"
+            style={{ color: 'rgba(255,255,255,0.15)', fontSize: '11px', textDecoration: 'none', marginTop: '8px', display: 'inline-block' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.15)'}
+          >
+            Admin
+          </Link>
         </div>
       </div>
     </footer>

@@ -1,15 +1,17 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, ShoppingBag, Grid3X3, Phone } from 'lucide-react';
+import { Home, ShoppingBag, Grid3X3, Heart } from 'lucide-react';
+import { useFavorites } from '../../hooks/useFavorites';
 
 const navItems = [
   { name: 'होम', path: '/', icon: Home },
   { name: 'साड़ियाँ', path: '/sarees', icon: ShoppingBag },
   { name: 'श्रेणियाँ', path: '/categories', icon: Grid3X3 },
-  { name: 'संपर्क', path: '/contact', icon: Phone },
+  { name: 'पसंदीदा', path: '/favorites', icon: Heart },
 ];
 
 export default function MobileBottomNav() {
   const location = useLocation();
+  const { count } = useFavorites();
 
   return (
     <nav
@@ -30,6 +32,7 @@ export default function MobileBottomNav() {
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
+          const isFavTab = item.path === '/favorites';
 
           return (
             <Link
@@ -51,18 +54,43 @@ export default function MobileBottomNav() {
                   top: '-1px',
                   width: '32px',
                   height: '2.5px',
-                  backgroundColor: '#800020',
+                  backgroundColor: '#B8960C',
                   borderRadius: '2px',
                 }} />
               )}
-              <Icon
-                size={20}
-                style={{ color: isActive ? '#800020' : '#999' }}
-              />
+              <div style={{ position: 'relative' }}>
+                <Icon
+                  size={20}
+                  style={{
+                    color: isActive ? '#B8960C' : '#999',
+                    fill: isFavTab && isActive ? '#B8960C' : 'none',
+                  }}
+                />
+                {isFavTab && count > 0 && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    right: '-6px',
+                    width: '14px',
+                    height: '14px',
+                    borderRadius: '50%',
+                    backgroundColor: '#B8960C',
+                    color: '#fff',
+                    fontSize: '8px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1.5px solid #fff',
+                  }}>
+                    {count > 9 ? '9+' : count}
+                  </div>
+                )}
+              </div>
               <span style={{
                 fontSize: '10px',
                 fontWeight: isActive ? '600' : '500',
-                color: isActive ? '#800020' : '#999',
+                color: isActive ? '#B8960C' : '#999',
               }}>
                 {item.name}
               </span>

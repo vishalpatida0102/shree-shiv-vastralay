@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Gem, Heart, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/ui/SEO';
 import PageTransition from '../components/animations/PageTransition';
 import ScrollReveal from '../components/animations/ScrollReveal';
 import StatsSection from '../components/home/StatsSection';
@@ -17,8 +18,8 @@ const values = [
   },
   {
     icon: Shield,
-    color: '#800020',
-    bg: 'rgba(128,0,32,0.06)',
+    color: '#B8960C',
+    bg: 'rgba(184,150,12,0.06)',
     title: 'परंपरा',
     desc: 'भारतीय बुनकरों की सदियों पुरानी कला और परंपरा को हम आगे बढ़ा रहे हैं। हर धागे में एक कहानी है।',
   },
@@ -36,6 +37,7 @@ export default function About() {
 
   return (
     <PageTransition>
+      <SEO title="हमारे बारे में" description="नागपुर वाला — 39,000+ ग्राहकों का भरोसा। जानिए हमारी कहानी और हमारे मूल्य।" />
       <div style={{ paddingTop: '64px', minHeight: '100vh' }}>
 
         {/* ═══════ Hero Section ═══════ */}
@@ -121,7 +123,7 @@ export default function About() {
               </div>
               <h2
                 className="font-heading"
-                style={{ fontSize: '24px', fontWeight: '700', color: '#800020', margin: 0 }}
+                style={{ fontSize: '24px', fontWeight: '700', color: '#B8960C', margin: 0 }}
               >
                 नागपुर वाला
               </h2>
@@ -206,7 +208,7 @@ export default function About() {
             <div style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(135deg, rgba(128,0,32,0.88), rgba(80,0,15,0.92))',
+              background: 'linear-gradient(135deg, rgba(45,45,45,0.88), rgba(26,26,26,0.92))',
             }} />
 
             {/* Content */}
@@ -293,7 +295,7 @@ export default function About() {
                     width: '38px',
                     height: '38px',
                     borderRadius: '10px',
-                    background: 'linear-gradient(135deg, #800020, #a0002a)',
+                    background: 'linear-gradient(135deg, #2D2D2D, #1a1a1a)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -326,7 +328,7 @@ export default function About() {
           position: 'relative',
         }}>
           <div style={{
-            background: 'linear-gradient(135deg, #800020 0%, #5a0015 50%, #2D2D2D 100%)',
+            background: 'linear-gradient(135deg, #1a1a1a 0%, #2D2D2D 50%, #1a1a1a 100%)',
             padding: '40px 24px',
             textAlign: 'center',
           }}>
@@ -367,7 +369,7 @@ export default function About() {
                   alignItems: 'center',
                   gap: '8px',
                   backgroundColor: ctaHovered ? '#fff' : '#D4AF37',
-                  color: ctaHovered ? '#800020' : '#2D2D2D',
+                  color: ctaHovered ? '#B8960C' : '#2D2D2D',
                   fontWeight: '600',
                   padding: '13px 28px',
                   borderRadius: '50px',
