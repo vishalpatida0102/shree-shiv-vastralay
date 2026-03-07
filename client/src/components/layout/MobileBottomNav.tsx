@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, ShoppingBag, Grid3X3, Heart } from 'lucide-react';
+import { Home, ShoppingBag, Grid3X3, Heart, Phone } from 'lucide-react';
 import { useFavorites } from '../../hooks/useFavorites';
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
   { name: 'साड़ियाँ', path: '/sarees', icon: ShoppingBag },
   { name: 'श्रेणियाँ', path: '/categories', icon: Grid3X3 },
   { name: 'पसंदीदा', path: '/favorites', icon: Heart },
+  { name: 'संपर्क', path: '/contact', icon: Phone },
 ];
 
 export default function MobileBottomNav() {
@@ -45,7 +46,7 @@ export default function MobileBottomNav() {
                 gap: '3px',
                 textDecoration: 'none',
                 position: 'relative',
-                padding: '4px 16px',
+                padding: '4px 12px',
               }}
             >
               {isActive && (
