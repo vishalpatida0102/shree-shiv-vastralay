@@ -5,19 +5,22 @@ import { ArrowRight } from 'lucide-react';
 
 const heroSlides = [
   {
+    image: '',
+    title: 'नागपुर वाला',
+    subtitle: 'जहाँ परंपरा मिलती है फैशन से',
+    isLogo: true,
+  },
+  {
     image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1600',
     title: 'जहाँ परंपरा मिलती है फैशन से',
     subtitle: 'एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन — नागपुर वाला',
+    isLogo: false,
   },
   {
     image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=1600',
     title: 'ब्राइडल कलेक्शन',
     subtitle: 'दुल्हन के लिए विशेष साड़ियाँ — ऐसी शान जो कभी पुरानी न हो',
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1592301933927-35b597393c0a?w=1600',
-    title: 'एक्सक्लूसिव कलेक्शन',
-    subtitle: 'हर अवसर के लिए खास साड़ियाँ, सिर्फ आपके लिए',
+    isLogo: false,
   },
 ];
 
@@ -42,15 +45,47 @@ export default function Hero() {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 1.05, opacity: 0 }}
           transition={{ duration: 1.2, ease: 'easeInOut' }}
-          style={{ position: 'absolute', inset: 0 }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: heroSlides[current].isLogo
+              ? 'linear-gradient(135deg, #1a1206 0%, #2D2D2D 50%, #1a1206 100%)'
+              : undefined,
+          }}
         >
-          <motion.img
-            src={heroSlides[current].image}
-            alt=""
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            animate={{ scale: [1, 1.08] }}
-            transition={{ duration: 8, ease: 'linear' }}
-          />
+          {heroSlides[current].isLogo ? (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingBottom: '120px',
+            }}>
+              <motion.img
+                src="/logo.jpeg"
+                alt="नागपुर वाला"
+                style={{
+                  width: '180px',
+                  height: '180px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '4px solid #D4AF37',
+                  boxShadow: '0 0 60px rgba(212,175,55,0.3), 0 0 120px rgba(212,175,55,0.1)',
+                }}
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </div>
+          ) : (
+            <motion.img
+              src={heroSlides[current].image}
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              animate={{ scale: [1, 1.08] }}
+              transition={{ duration: 8, ease: 'linear' }}
+            />
+          )}
         </motion.div>
       </AnimatePresence>
 
@@ -58,7 +93,9 @@ export default function Hero() {
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 100%)',
+        background: heroSlides[current].isLogo
+          ? 'radial-gradient(circle at center 40%, transparent 30%, rgba(0,0,0,0.4) 100%)'
+          : 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 100%)',
       }} />
 
       {/* Content */}
@@ -81,22 +118,6 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
           >
             {/* Small label */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: 'rgba(212,175,55,0.15)',
-              backdropFilter: 'blur(10px)',
-              padding: '6px 16px',
-              borderRadius: '20px',
-              marginBottom: '16px',
-            }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#D4AF37' }} />
-              <span style={{ fontSize: '11px', fontWeight: '600', color: '#D4AF37', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                नागपुर वाला
-              </span>
-            </div>
-
             <h1
               className="font-heading"
               style={{

@@ -42,17 +42,32 @@ export default function About() {
 
         {/* ═══════ Hero Section ═══════ */}
         <div style={{ position: 'relative', overflow: 'hidden' }}>
-          {/* Background image */}
-          <div style={{ position: 'relative', height: '52vh', minHeight: '340px' }}>
+          {/* Background with logo */}
+          <div style={{
+            position: 'relative',
+            height: '52vh',
+            minHeight: '340px',
+            background: 'linear-gradient(135deg, #1a1206 0%, #2D2D2D 50%, #1a1206 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
             <img
-              src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1200"
-              alt="Nagpur Wala Sarees"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              src="/logo.jpeg"
+              alt="नागपुर वाला"
+              style={{
+                width: '160px',
+                height: '160px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: '4px solid #D4AF37',
+                boxShadow: '0 0 60px rgba(212,175,55,0.3), 0 0 120px rgba(212,175,55,0.1)',
+              }}
             />
             <div style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to bottom, rgba(45,45,45,0.3) 0%, rgba(45,45,45,0.6) 50%, rgba(45,45,45,0.92) 100%)',
+              background: 'radial-gradient(circle at center 40%, transparent 30%, rgba(0,0,0,0.4) 100%)',
             }} />
           </div>
 
