@@ -68,9 +68,9 @@ export default function Hero() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         textAlign: 'center',
-        padding: '0 20px',
+        padding: '0 20px 180px',
       }}>
         <AnimatePresence mode="wait">
           <motion.div

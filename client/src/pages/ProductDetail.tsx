@@ -260,9 +260,23 @@ export default function ProductDetail() {
         {related.length > 0 && (
           <section style={{ marginTop: '48px', padding: '0 16px', maxWidth: '1200px', margin: '48px auto 0' }}>
             <ScrollReveal>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                <div style={{ width: '3px', height: '22px', backgroundColor: '#B8960C', borderRadius: '2px' }} />
-                <h2 className="font-heading" style={{ fontSize: '18px', fontWeight: '700', color: '#2D2D2D', margin: 0 }}>इसी श्रेणी की अन्य साड़ियाँ</h2>
+              <div style={{ marginBottom: '20px' }}>
+                <span
+                  className="font-heading"
+                  style={{
+                    display: 'inline-block',
+                    background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                    color: '#1a1a1a',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    padding: '8px 22px',
+                    borderRadius: '50px',
+                    letterSpacing: '0.5px',
+                    boxShadow: '0 2px 8px rgba(184,150,12,0.25)',
+                  }}
+                >
+                  इसी श्रेणी की अन्य साड़ियाँ
+                </span>
               </div>
             </ScrollReveal>
             <StaggerChildren>

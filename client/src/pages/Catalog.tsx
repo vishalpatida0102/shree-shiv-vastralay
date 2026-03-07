@@ -115,12 +115,27 @@ export default function Catalog() {
       <SEO title="साड़ियाँ" description="सिल्क, बनारसी, पैठणी, कॉटन और डिज़ाइनर साड़ियों का पूरा संग्रह। नागपुर वाला पर खरीदें।" />
       <div style={{ paddingTop: '80px', paddingBottom: '100px' }} className="md:pt-24 md:pb-12 min-h-screen">
         <div className="max-w-7xl mx-auto" style={{ padding: '0 16px' }}>
-          <h1 className="font-heading font-bold text-maroon" style={{ fontSize: '26px', marginBottom: '6px' }}>
-            साड़ियाँ
-          </h1>
-          <p className="text-charcoal-light" style={{ fontSize: '14px', marginBottom: '20px' }}>
-            हमारा पूरा संग्रह देखें ({total} साड़ियाँ)
-          </p>
+          <div style={{ marginBottom: '20px' }}>
+            <span
+              className="font-heading"
+              style={{
+                display: 'inline-block',
+                background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                color: '#1a1a1a',
+                fontSize: '14px',
+                fontWeight: '700',
+                padding: '8px 22px',
+                borderRadius: '50px',
+                letterSpacing: '0.5px',
+                boxShadow: '0 2px 8px rgba(184,150,12,0.25)',
+              }}
+            >
+              साड़ियाँ
+            </span>
+            <p style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>
+              हमारा पूरा संग्रह देखें ({total} साड़ियाँ)
+            </p>
+          </div>
 
           {loading ? (
             <div className="grid grid-cols-2 lg:grid-cols-3" style={{ gap: '12px', paddingTop: '20px' }}>

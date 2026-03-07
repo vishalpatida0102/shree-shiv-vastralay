@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Product from '../models/Product';
+import { deleteCloudinaryImages } from '../utils/cloudinary';
 
 export async function getProducts(req: Request, res: Response) {
   try {
@@ -69,11 +70,24 @@ export async function createProduct(req: Request, res: Response) {
 
 export async function updateProduct(req: Request, res: Response) {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!product) {
+    // Get old product to compare images
+    const oldProduct = await Product.findById(req.params.id);
+    if (!oldProduct) {
       res.status(404).json({ message: 'उत्पाद नहीं मिला' });
       return;
     }
+
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    // Delete removed images from Cloudinary
+    if (req.body.images) {
+      const newImages = new Set(req.body.images as string[]);
+      const removedImages = oldProduct.images.filter((img) => !newImages.has(img));
+      if (removedImages.length > 0) {
+        deleteCloudinaryImages(removedImages);
+      }
+    }
+
     res.json(product);
   } catch (err) {
     res.status(400).json({ message: 'अमान्य डेटा' });
@@ -87,6 +101,12 @@ export async function deleteProduct(req: Request, res: Response) {
       res.status(404).json({ message: 'उत्पाद नहीं मिला' });
       return;
     }
+
+    // Delete all product images from Cloudinary
+    if (product.images.length > 0) {
+      deleteCloudinaryImages(product.images);
+    }
+
     res.json({ message: 'उत्पाद हटाया गया' });
   } catch (err) {
     res.status(500).json({ message: 'सर्वर में त्रुटि' });

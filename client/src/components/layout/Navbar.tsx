@@ -36,12 +36,29 @@ export default function Navbar() {
 
   return (
     <>
+      <style>{`
+        .nav-desktop { display: none; }
+        .nav-mobile-btn { display: block; }
+        .nav-mobile-menu { display: flex; }
+        @media (min-width: 768px) {
+          .nav-desktop { display: flex; }
+          .nav-mobile-btn { display: none; }
+          .nav-mobile-menu { display: none; }
+        }
+      `}</style>
+
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-md'
-            : 'bg-transparent'
-        }`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          transition: 'all 0.3s ease',
+          backgroundColor: isScrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
+          backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+          boxShadow: isScrolled ? '0 2px 12px rgba(0,0,0,0.08)' : 'none',
+        }}
       >
         <nav style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
@@ -76,7 +93,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex" style={{ alignItems: 'center', gap: '32px' }}>
+            <div className="nav-desktop" style={{ alignItems: 'center', gap: '32px' }}>
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
@@ -107,7 +124,7 @@ export default function Navbar() {
             {/* Favorites Icon - Desktop */}
             <Link
               to="/favorites"
-              className="hidden md:flex"
+              className="nav-desktop"
               style={{
                 position: 'relative',
                 alignItems: 'center',
@@ -152,8 +169,8 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden"
-              style={{ padding: '8px', color: '#2D2D2D', background: 'none', border: 'none', cursor: 'pointer', zIndex: 60, position: 'relative' }}
+              className="nav-mobile-btn"
+              style={{ padding: '8px', color: isScrolled ? '#2D2D2D' : '#fff', background: 'none', border: 'none', cursor: 'pointer', zIndex: 60, position: 'relative' }}
               aria-label="मेनू"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -170,13 +187,12 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden"
+            className="nav-mobile-menu"
             style={{
               position: 'fixed',
               inset: '0',
               zIndex: 55,
               backgroundColor: '#fff',
-              display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',

@@ -76,14 +76,22 @@ export default function Favorites() {
                   <Heart size={18} style={{ color: '#fff', fill: '#fff' }} />
                 </div>
                 <div>
-                  <h1 className="font-heading" style={{
-                    fontSize: '24px',
-                    fontWeight: '700',
-                    color: '#2D2D2D',
-                    margin: 0,
-                  }}>
+                  <span
+                    className="font-heading"
+                    style={{
+                      display: 'inline-block',
+                      background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                      color: '#1a1a1a',
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      padding: '8px 22px',
+                      borderRadius: '50px',
+                      letterSpacing: '0.5px',
+                      boxShadow: '0 2px 8px rgba(184,150,12,0.25)',
+                    }}
+                  >
                     पसंदीदा साड़ियाँ
-                  </h1>
+                  </span>
                   <p style={{ fontSize: '13px', color: '#999', margin: '2px 0 0' }}>
                     {favSarees.length > 0
                       ? `${favSarees.length} साड़ियाँ आपकी पसंद में`
