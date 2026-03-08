@@ -17,16 +17,21 @@ export default function RecentlyViewed() {
         />
       </div>
 
-      <div style={{
-        display: 'flex',
-        gap: '12px',
-        overflowX: 'auto',
-        padding: '4px 16px 16px',
-        scrollSnapType: 'x mandatory',
-      }}>
+      <div
+        id="recent-scroll"
+        style={{
+          display: 'flex',
+          gap: '12px',
+          overflowX: 'auto',
+          padding: '4px 16px 16px',
+          scrollSnapType: 'x mandatory',
+        }}
+      >
         <style>{`
-          #recent-scroll::-webkit-scrollbar { display: none; }
-          #recent-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+          #recent-scroll::-webkit-scrollbar { height: 4px; }
+          #recent-scroll::-webkit-scrollbar-track { background: transparent; }
+          #recent-scroll::-webkit-scrollbar-thumb { background: linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%); border-radius: 10px; }
+          #recent-scroll { scrollbar-width: thin; scrollbar-color: #D4AF37 transparent; }
         `}</style>
         {recentItems.map((item, i) => (
           <ScrollReveal key={item.id} delay={Math.min(i * 0.06, 0.3)}>

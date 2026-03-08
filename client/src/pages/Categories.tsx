@@ -196,17 +196,17 @@ export default function Categories() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            style={{ marginBottom: '24px', paddingTop: '8px' }}
+            style={{ marginBottom: '28px', paddingTop: '16px' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <div style={{ width: '28px', height: '2.5px', backgroundColor: '#D4AF37', borderRadius: '2px' }} />
-              <span style={{ fontSize: '11px', fontWeight: '600', color: '#D4AF37', textTransform: 'uppercase', letterSpacing: '1.5px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              <div style={{ width: '28px', height: '3px', background: 'linear-gradient(90deg, #D4AF37, #B8960C)', borderRadius: '2px' }} />
+              <span style={{ fontSize: '11px', fontWeight: '700', color: '#D4AF37', textTransform: 'uppercase' as const, letterSpacing: '1.5px' }}>
                 कलेक्शन
               </span>
             </div>
             <h1
               className="font-heading"
-              style={{ fontSize: '26px', fontWeight: '700', color: '#2D2D2D', margin: '0 0 6px 0' }}
+              style={{ fontSize: '26px', fontWeight: '700', color: '#2D2D2D', margin: '0 0 8px 0' }}
             >
               श्रेणियाँ
             </h1>
@@ -217,7 +217,7 @@ export default function Categories() {
 
           {/* Hero Category */}
           {heroCategory && (
-            <div style={{ marginBottom: '12px' }}>
+            <div style={{ marginBottom: '16px' }}>
               <CategoryCard cat={heroCategory} index={0} sareeCount={getSareeCount(heroCategory.id)} isLarge />
             </div>
           )}
@@ -257,8 +257,8 @@ export default function Categories() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: '#B8960C',
-                color: '#fff',
+                background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                color: '#1a1a1a',
                 fontWeight: '600',
                 padding: '12px 28px',
                 borderRadius: '50px',

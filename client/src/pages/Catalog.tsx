@@ -120,7 +120,7 @@ export default function Catalog() {
               className="font-heading"
               style={{
                 display: 'inline-block',
-                background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
                 color: '#1a1a1a',
                 fontSize: '14px',
                 fontWeight: '700',

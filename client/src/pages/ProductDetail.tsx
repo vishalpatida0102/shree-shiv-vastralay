@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Share2, Heart, X, Check, Truck, Shield, ArrowLeft, Copy } from 'lucide-react';
@@ -28,6 +28,9 @@ export default function ProductDetail() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { addItem: addRecentlyViewed } = useRecentlyViewed();
   const { showToast } = useToast();
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const isSwiping = useRef(false);
 
   useEffect(() => {
     if (!id) return;
@@ -82,6 +85,24 @@ export default function ProductDetail() {
   const nextImage = () => setSelectedImage((prev) => (prev + 1) % saree.images.length);
   const prevImage = () => setSelectedImage((prev) => (prev - 1 + saree.images.length) % saree.images.length);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    isSwiping.current = false;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      isSwiping.current = true;
+      if (dx < 0) nextImage();
+      else prevImage();
+    }
+  };
+  const handleImageClick = () => {
+    if (!isSwiping.current) setIsZoomed(true);
+  };
+
   return (
     <PageTransition>
       <SEO title={saree.name} description={saree.description} image={saree.images[0]} />
@@ -111,7 +132,9 @@ export default function ProductDetail() {
           <div>
             <div
               style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', backgroundColor: '#f5f0eb', aspectRatio: '3/4', cursor: 'zoom-in' }}
-              onClick={() => setIsZoomed(true)}
+              onClick={handleImageClick}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
             >
               <AnimatePresence mode="wait">
                 <motion.img
@@ -185,7 +208,7 @@ export default function ProductDetail() {
               {(saree.isNew || discount > 0) && (
                 <div style={{ position: 'absolute', bottom: '12px', left: '12px', display: 'flex', gap: '6px' }}>
                   {saree.isNew && (<span style={{ background: 'linear-gradient(135deg, #2D2D2D, #3a3a3a)', color: '#fff', fontSize: '10px', fontWeight: '700', padding: '4px 10px', borderRadius: '20px' }}>नया संग्रह</span>)}
-                  {discount > 0 && (<span style={{ background: 'linear-gradient(135deg, #D4AF37, #c49a20)', color: '#2D2D2D', fontSize: '10px', fontWeight: '700', padding: '4px 10px', borderRadius: '20px' }}>{discount}% छूट</span>)}
+                  {discount > 0 && (<span style={{ background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)', color: '#1a1a1a', fontSize: '10px', fontWeight: '700', padding: '4px 10px', borderRadius: '20px' }}>{discount}% छूट</span>)}
                 </div>
               )}
             </div>
@@ -265,7 +288,7 @@ export default function ProductDetail() {
                   className="font-heading"
                   style={{
                     display: 'inline-block',
-                    background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                    background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
                     color: '#1a1a1a',
                     fontSize: '14px',
                     fontWeight: '700',

@@ -68,7 +68,7 @@ export default function Favorites() {
                   width: '40px',
                   height: '40px',
                   borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                  background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -80,7 +80,7 @@ export default function Favorites() {
                     className="font-heading"
                     style={{
                       display: 'inline-block',
-                      background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                      background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
                       color: '#1a1a1a',
                       fontSize: '14px',
                       fontWeight: '700',
@@ -171,7 +171,7 @@ export default function Favorites() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  background: 'linear-gradient(135deg, #B8960C, #D4AF37)',
+                  background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
                   color: '#fff',
                   padding: '12px 28px',
                   borderRadius: '50px',
