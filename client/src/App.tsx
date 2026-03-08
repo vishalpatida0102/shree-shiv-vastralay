@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { HelmetProvider } from 'react-helmet-async';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import MobileBottomNav from './components/layout/MobileBottomNav';
@@ -86,6 +87,7 @@ export default function App() {
         <AuthProvider>
           <ToastProvider>
             <AppContent />
+            <Analytics />
           </ToastProvider>
         </AuthProvider>
       </BrowserRouter>
