@@ -5,6 +5,7 @@ import FeaturedSarees from '../components/home/FeaturedSarees';
 import CategoryShowcase from '../components/home/CategoryShowcase';
 import StatsSection from '../components/home/StatsSection';
 import Testimonials from '../components/home/Testimonials';
+import DeliveryInfo from '../components/home/DeliveryInfo';
 import RecentlyViewed from '../components/home/RecentlyViewed';
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
       <FeaturedSarees />
       <CategoryShowcase />
       <StatsSection />
+      <DeliveryInfo />
       <Testimonials />
     </PageTransition>
   );

@@ -198,19 +198,23 @@ export default function Categories() {
             transition={{ duration: 0.5 }}
             style={{ marginBottom: '28px', paddingTop: '16px' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <div style={{ width: '28px', height: '3px', background: 'linear-gradient(90deg, #D4AF37, #B8960C)', borderRadius: '2px' }} />
-              <span style={{ fontSize: '11px', fontWeight: '700', color: '#D4AF37', textTransform: 'uppercase' as const, letterSpacing: '1.5px' }}>
-                कलेक्शन
-              </span>
-            </div>
-            <h1
+            <span
               className="font-heading"
-              style={{ fontSize: '26px', fontWeight: '700', color: '#2D2D2D', margin: '0 0 8px 0' }}
+              style={{
+                display: 'inline-block',
+                background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                color: '#1a1a1a',
+                fontSize: '14px',
+                fontWeight: '700',
+                padding: '8px 22px',
+                borderRadius: '50px',
+                letterSpacing: '0.5px',
+                boxShadow: '0 2px 8px rgba(184,150,12,0.25)',
+              }}
             >
               श्रेणियाँ
-            </h1>
-            <p style={{ fontSize: '13px', color: '#888', margin: 0, lineHeight: '1.6' }}>
+            </span>
+            <p style={{ fontSize: '13px', color: '#888', margin: '14px 0 0', lineHeight: '1.6' }}>
               अपनी पसंद की श्रेणी चुनें और एक्सक्लूसिव साड़ियाँ खोजें
             </p>
           </motion.div>

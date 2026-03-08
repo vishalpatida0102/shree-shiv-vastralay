@@ -63,41 +63,28 @@ export default function Favorites() {
             </Link>
 
             <ScrollReveal>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <Heart size={18} style={{ color: '#fff', fill: '#fff' }} />
-                </div>
-                <div>
-                  <span
-                    className="font-heading"
-                    style={{
-                      display: 'inline-block',
-                      background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
-                      color: '#1a1a1a',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      padding: '8px 22px',
-                      borderRadius: '50px',
-                      letterSpacing: '0.5px',
-                      boxShadow: '0 2px 8px rgba(184,150,12,0.25)',
-                    }}
-                  >
-                    पसंदीदा साड़ियाँ
-                  </span>
-                  <p style={{ fontSize: '13px', color: '#999', margin: '2px 0 0' }}>
-                    {favSarees.length > 0
-                      ? `${favSarees.length} साड़ियाँ आपकी पसंद में`
-                      : loading ? 'लोड हो रहा है...' : 'अभी कोई पसंदीदा नहीं'}
-                  </p>
-                </div>
+            <div>
+                <span
+                  className="font-heading"
+                  style={{
+                    display: 'inline-block',
+                    background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                    color: '#1a1a1a',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    padding: '8px 22px',
+                    borderRadius: '50px',
+                    letterSpacing: '0.5px',
+                    boxShadow: '0 2px 8px rgba(184,150,12,0.25)',
+                  }}
+                >
+                  पसंदीदा साड़ियाँ
+                </span>
+                <p style={{ fontSize: '13px', color: '#999', margin: '10px 0 0', lineHeight: '1.6' }}>
+                  {favSarees.length > 0
+                    ? `${favSarees.length} साड़ियाँ आपकी पसंद में`
+                    : loading ? 'लोड हो रहा है...' : 'अभी कोई पसंदीदा नहीं'}
+                </p>
               </div>
             </ScrollReveal>
           </div>
