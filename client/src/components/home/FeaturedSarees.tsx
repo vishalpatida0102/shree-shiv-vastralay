@@ -39,22 +39,15 @@ export default function FeaturedSarees() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            border: '2px solid #B8960C',
-            color: '#B8960C',
+            border: 'none',
+            background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+            color: '#1a1a1a',
             fontWeight: '600',
             padding: '12px 28px',
             borderRadius: '50px',
             fontSize: '14px',
             textDecoration: 'none',
             transition: 'all 0.3s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#B8960C';
-            e.currentTarget.style.color = '#fff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = '#B8960C';
           }}
         >
           सभी साड़ियाँ देखें

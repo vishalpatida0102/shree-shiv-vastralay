@@ -11,7 +11,7 @@ const heroSlides = [
     isLogo: true,
   },
   {
-    image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1600',
+    image: '/1772967136869 (1).png',
     title: 'जहाँ परंपरा मिलती है फैशन से',
     subtitle: 'एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन — नागपुर वाला',
     isLogo: false,
@@ -62,20 +62,29 @@ export default function Hero() {
               justifyContent: 'center',
               paddingBottom: '120px',
             }}>
-              <motion.img
-                src="/logo.jpeg"
-                alt="नागपुर वाला"
+              <motion.div
                 style={{
-                  width: '180px',
-                  height: '180px',
+                  width: '188px',
+                  height: '188px',
                   borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: '4px solid #D4AF37',
+                  background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                  padding: '4px',
                   boxShadow: '0 0 60px rgba(212,175,55,0.3), 0 0 120px rgba(212,175,55,0.1)',
                 }}
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              />
+              >
+                <img
+                  src="/logo.jpeg"
+                  alt="नागपुर वाला"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </motion.div>
             </div>
           ) : (
             <motion.img
@@ -159,7 +168,7 @@ export default function Hero() {
               gap: '10px',
               background: btnHovered
                 ? 'linear-gradient(135deg, #fff, #f5f0eb)'
-                : 'linear-gradient(135deg, #D4AF37, #c49a20)',
+                : 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
               color: btnHovered ? '#2D2D2D' : '#2D2D2D',
               fontWeight: '700',
               padding: '14px 32px',

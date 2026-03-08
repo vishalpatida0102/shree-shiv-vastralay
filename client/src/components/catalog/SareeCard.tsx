@@ -84,8 +84,8 @@ export default function SareeCard({ saree }: SareeCardProps) {
               )}
               {discount > 0 && (
                 <span style={{
-                  background: 'linear-gradient(135deg, #D4AF37, #c49a20)',
-                  color: '#2D2D2D',
+                  background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                  color: '#1a1a1a',
                   fontSize: '9px',
                   fontWeight: '700',
                   padding: '3px 9px',

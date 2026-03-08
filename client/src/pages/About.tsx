@@ -38,7 +38,7 @@ export default function About() {
   return (
     <PageTransition>
       <SEO title="हमारे बारे में" description="नागपुर वाला — 39,000+ ग्राहकों का भरोसा। जानिए हमारी कहानी और हमारे मूल्य।" />
-      <div style={{ paddingTop: '64px', minHeight: '100vh' }}>
+      <div style={{ paddingTop: '64px', minHeight: '100vh', backgroundColor: '#FAF7F2' }}>
 
         {/* ═══════ Hero Section ═══════ */}
         <div style={{ position: 'relative', overflow: 'hidden' }}>
@@ -51,19 +51,27 @@ export default function About() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            paddingBottom: '80px',
           }}>
-            <img
-              src="/logo.jpeg"
-              alt="नागपुर वाला"
-              style={{
-                width: '160px',
-                height: '160px',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '4px solid #D4AF37',
-                boxShadow: '0 0 60px rgba(212,175,55,0.3), 0 0 120px rgba(212,175,55,0.1)',
-              }}
-            />
+            <div style={{
+              width: '168px',
+              height: '168px',
+              borderRadius: '50%',
+              background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+              padding: '4px',
+              boxShadow: '0 0 60px rgba(212,175,55,0.3), 0 0 120px rgba(212,175,55,0.1)',
+            }}>
+              <img
+                src="/logo.jpeg"
+                alt="नागपुर वाला"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
             <div style={{
               position: 'absolute',
               inset: 0,
@@ -383,8 +391,8 @@ export default function About() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  backgroundColor: ctaHovered ? '#fff' : '#D4AF37',
-                  color: ctaHovered ? '#B8960C' : '#2D2D2D',
+                  background: ctaHovered ? '#fff' : 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                  color: '#1a1a1a',
                   fontWeight: '600',
                   padding: '13px 28px',
                   borderRadius: '50px',

@@ -117,8 +117,8 @@ export default function Contact() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                backgroundColor: '#B8960C',
-                color: '#fff',
+                background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                color: '#1a1a1a',
                 fontWeight: '600',
                 padding: '14px 10px',
                 borderRadius: '14px',
@@ -409,8 +409,8 @@ export default function Contact() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
-                      backgroundColor: submitHover ? '#9A7B0A' : '#B8960C',
-                      color: '#fff',
+                      background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                      color: '#1a1a1a',
                       fontWeight: '600',
                       padding: '14px',
                       borderRadius: '12px',
@@ -480,7 +480,7 @@ export default function Contact() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
                       <div style={{
                         width: '32px', height: '32px', borderRadius: '10px',
-                        background: 'linear-gradient(135deg, #D4AF37, #c49a20)',
+                        background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
                         <Star size={16} style={{ color: '#fff', fill: '#fff' }} />
@@ -615,10 +615,8 @@ export default function Contact() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           gap: '8px',
-                          background: reviewHover
-                            ? 'linear-gradient(135deg, #9a7a20, #D4AF37)'
-                            : 'linear-gradient(135deg, #D4AF37, #c49a20)',
-                          color: '#fff',
+                          background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                          color: '#1a1a1a',
                           fontWeight: '600',
                           padding: '14px',
                           borderRadius: '12px',

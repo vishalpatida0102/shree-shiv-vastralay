@@ -299,10 +299,8 @@ export default function AdminLogin() {
               style={{
                 width: '100%',
                 padding: '15px 24px',
-                background: btnHovered
-                  ? 'linear-gradient(135deg, #D4AF37, #B8960C)'
-                  : 'linear-gradient(135deg, #B8960C, #9A7B0A)',
-                color: '#fff',
+                background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                color: '#1a1a1a',
                 fontSize: '14px',
                 fontWeight: '700',
                 border: 'none',

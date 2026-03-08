@@ -255,7 +255,7 @@ export const shopInfo = {
   phone2: '+919752873734',
   whatsapp: '+917999665102',
   email: 'nagpurwala04@gmail.com',
-  address: 'सांवेर, इंदौर, मध्य प्रदेश',
+  address: 'ग्राम नागपुर, सांवेर, इंदौर, मध्य प्रदेश',
   mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.1234567890!2d79.0882!3d21.1458!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDA4JzQ1LjAiTiA3OcKwMDUnMTcuNiJF!5e0!3m2!1sen!2sin!4v1234567890',
   instagram: 'https://instagram.com/nagpur_wala04',
   facebook: 'https://facebook.com/nagpurwala',

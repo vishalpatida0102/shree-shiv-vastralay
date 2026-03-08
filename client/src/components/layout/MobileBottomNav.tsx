@@ -55,7 +55,7 @@ export default function MobileBottomNav() {
                   top: '-1px',
                   width: '32px',
                   height: '2.5px',
-                  backgroundColor: '#B8960C',
+                  background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
                   borderRadius: '2px',
                 }} />
               )}
