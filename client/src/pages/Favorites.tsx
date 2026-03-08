@@ -63,7 +63,7 @@ export default function Favorites() {
             </Link>
 
             <ScrollReveal>
-              <div>
+            <div>
                 <span
                   className="font-heading"
                   style={{
