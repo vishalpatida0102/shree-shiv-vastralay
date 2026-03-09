@@ -79,7 +79,7 @@ export default function Footer() {
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none' }}
               >
                 <Phone size={14} style={{ flexShrink: 0 }} />
-                <span>7999665102<br />9752873734</span>
+                <span>9752985509<br />9243165323</span>
               </a>
               <a
                 href={`mailto:${shopInfo.email}`}

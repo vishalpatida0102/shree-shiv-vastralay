@@ -213,12 +213,12 @@ export default function Contact() {
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>फ़ोन</p>
                     <div style={{ display: 'flex', gap: '12px' }}>
-                      <a href={`tel:${shopInfo.phone}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
-                        7999665102
+                      <a href="tel:+919752985509" style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
+                        9752985509
                       </a>
                       <span style={{ color: '#ddd' }}>|</span>
-                      <a href={`tel:${shopInfo.phone2}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
-                        9752873734
+                      <a href="tel:+919243165323" style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
+                        9243165323
                       </a>
                     </div>
                   </div>

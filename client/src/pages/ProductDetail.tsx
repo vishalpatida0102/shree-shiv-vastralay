@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Share2, Heart, X, Check, Truck, Shield, ArrowLeft, Copy } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Share2, Heart, X, Check, Truck, Shield, ArrowLeft, Copy, ChevronDown, CreditCard, Clock, Package, MapPin, AlertCircle } from 'lucide-react';
 import SEO from '../components/ui/SEO';
 import PageTransition from '../components/animations/PageTransition';
 import SareeCard from '../components/catalog/SareeCard';
@@ -25,6 +25,7 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [showDelivery, setShowDelivery] = useState(false);
   const { isFavorite, toggleFavorite } = useFavorites();
   const { addItem: addRecentlyViewed } = useRecentlyViewed();
   const { showToast } = useToast();
@@ -265,6 +266,103 @@ export default function ProductDetail() {
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Delivery Info Accordion */}
+              <div style={{ marginBottom: '14px', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(184,150,12,0.25)' }}>
+                <div
+                  onClick={() => setShowDelivery(!showDelivery)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 16px', cursor: 'pointer', background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, justifyContent: 'center' }}>
+                    <Truck size={16} style={{ color: '#1a1a1a' }} />
+                    <span style={{ fontSize: '13px', fontWeight: '700', color: '#1a1a1a' }}>डिलीवरी जानकारी</span>
+                  </div>
+                  <ChevronDown size={16} style={{ color: '#1a1a1a', transform: showDelivery ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.3s', flexShrink: 0 }} />
+                </div>
+
+                <AnimatePresence>
+                  {showDelivery && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div style={{ padding: '0 16px 16px' }}>
+                        {/* Highlight Cards */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                          {[
+                            { icon: Truck, title: '₹80 प्रति साड़ी', desc: 'पूरे भारत में', color: '#D4AF37' },
+                            { icon: Clock, title: '7 कार्य दिवस', desc: 'में डिलीवरी', color: '#1565c0' },
+                            { icon: CreditCard, title: 'ऑनलाइन पेमेंट', desc: 'सिर्फ प्रीपेड', color: '#2e7d32' },
+                            { icon: Package, title: '1 साड़ी से ऑर्डर', desc: 'कोई मिनिमम नहीं', color: '#7b1fa2' },
+                          ].map((item) => {
+                            const Icon = item.icon;
+                            return (
+                              <div key={item.title} style={{ backgroundColor: '#fafafa', borderRadius: '10px', padding: '10px', textAlign: 'center' }}>
+                                <Icon size={16} style={{ color: item.color, marginBottom: '4px' }} />
+                                <p style={{ fontSize: '11px', fontWeight: '700', color: '#2D2D2D', margin: '0 0 2px' }}>{item.title}</p>
+                                <p style={{ fontSize: '10px', color: '#888', margin: 0 }}>{item.desc}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Order Steps */}
+                        <div style={{ background: 'linear-gradient(135deg, #2D2D2D 0%, #3a3a3a 100%)', borderRadius: '12px', padding: '14px' }}>
+                          <p className="font-heading" style={{ fontSize: '12px', fontWeight: '700', color: '#D4AF37', margin: '0 0 10px', textAlign: 'center' }}>ऑर्डर कैसे करें?</p>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {[
+                              { num: '1', title: 'साड़ी चुनें', desc: 'वेबसाइट पर पसंदीदा साड़ी देखें' },
+                              { num: '2', title: 'WhatsApp पर बताएँ', desc: 'नाम, नंबर, पता, पिनकोड दें' },
+                              { num: '3', title: 'पेमेंट करें', desc: 'ऑनलाइन पेमेंट करें' },
+                              { num: '4', title: 'डिलीवरी पाएँ', desc: '7 कार्य दिवस में घर पहुँचे' },
+                            ].map((step) => (
+                              <div key={step.num} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{
+                                  width: '24px', height: '24px', borderRadius: '50%',
+                                  background: 'linear-gradient(45deg, rgba(166,109,48,1), rgba(255,229,142,1) 50%, rgba(224,176,87,1) 100%)',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                                }}>
+                                  <span style={{ fontSize: '11px', fontWeight: '700', color: '#1a1a1a' }}>{step.num}</span>
+                                </div>
+                                <div>
+                                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#fff', margin: '0 0 1px' }}>{step.title}</p>
+                                  <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>{step.desc}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Customer Info Tags */}
+                          <div style={{ marginTop: '10px', padding: '10px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                              <MapPin size={11} style={{ color: '#D4AF37' }} />
+                              <p style={{ fontSize: '10px', fontWeight: '600', color: '#D4AF37', margin: 0 }}>ऑर्डर के लिए यह जानकारी दें:</p>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                              {['पूरा नाम', 'मोबाइल नंबर', 'पूरा पता', 'पिनकोड'].map((tag) => (
+                                <span key={tag} style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', backgroundColor: 'rgba(255,255,255,0.08)', padding: '3px 8px', borderRadius: '12px' }}>{tag}</span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Important Notes */}
+                          <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {['Cash on Delivery उपलब्ध नहीं है', 'कोई एक्सचेंज या रिटर्न नहीं'].map((note) => (
+                              <div key={note} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <AlertCircle size={10} style={{ color: 'rgba(255,255,255,0.4)', flexShrink: 0 }} />
+                                <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>{note}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#25D366', color: '#fff', fontWeight: '700', padding: '15px', borderRadius: '14px', fontSize: '15px', textDecoration: 'none', boxShadow: '0 4px 16px rgba(37,211,102,0.3)', marginBottom: '12px' }}>
