@@ -254,7 +254,7 @@ export default function Catalog() {
                 <div style={{ flex: '1', minWidth: '0' }}>
                   {filtered.length > 0 ? (
                     <>
-                      <StaggerChildren className="grid grid-cols-2 lg:grid-cols-3" style={{ gap: '12px' }}>
+                      <StaggerChildren key={filtered.length} className="grid grid-cols-2 lg:grid-cols-3" style={{ gap: '12px' }}>
                         {filtered.map((saree) => (
                           <SareeCard key={saree.id} saree={saree} />
                         ))}
