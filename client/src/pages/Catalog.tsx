@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SlidersHorizontal, X, ChevronDown, Loader2 } from 'lucide-react';
+import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import SEO from '../components/ui/SEO';
 import PageTransition from '../components/animations/PageTransition';
 import SareeCard from '../components/catalog/SareeCard';
@@ -106,9 +106,22 @@ export default function Catalog() {
   const hasActiveFilters = activeCategory || activeFabric || activeColor;
   const hasMore = sarees.length < total;
 
-  const handleLoadMore = () => {
-    fetchProducts(page + 1, true);
-  };
+  // Infinite scroll
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!loaderRef.current || !hasMore || activeFabric || activeColor) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loadingMore) {
+          fetchProducts(page + 1, true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, page, activeFabric, activeColor, fetchProducts]);
 
   return (
     <PageTransition>
@@ -133,7 +146,7 @@ export default function Catalog() {
               साड़ियाँ
             </span>
             <p style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>
-              हमारा पूरा संग्रह देखें ({total} साड़ियाँ)
+              हमारा पूरा संग्रह देखें
             </p>
           </div>
 
@@ -260,33 +273,12 @@ export default function Catalog() {
                         ))}
                       </StaggerChildren>
 
-                      {/* Load More Button */}
+                      {/* Infinite scroll trigger + shimmer */}
                       {hasMore && !activeFabric && !activeColor && (
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '32px' }}>
-                          <button
-                            onClick={handleLoadMore}
-                            disabled={loadingMore}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              backgroundColor: '#fff',
-                              color: '#B8960C',
-                              border: '1.5px solid #B8960C',
-                              padding: '12px 32px',
-                              borderRadius: '12px',
-                              fontSize: '14px',
-                              fontWeight: '600',
-                              cursor: loadingMore ? 'not-allowed' : 'pointer',
-                              opacity: loadingMore ? 0.7 : 1,
-                              transition: 'all 0.2s',
-                            }}
-                          >
-                            {loadingMore ? (
-                              <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                            ) : null}
-                            {loadingMore ? 'लोड हो रहा है...' : `और साड़ियाँ देखें (${total - sarees.length} और)`}
-                          </button>
+                        <div ref={loaderRef} className="grid grid-cols-2 lg:grid-cols-3" style={{ gap: '12px', marginTop: '12px' }}>
+                          {loadingMore && Array.from({ length: 4 }).map((_, i) => (
+                            <SareeCardSkeleton key={i} />
+                          ))}
                         </div>
                       )}
                     </>
