@@ -9,7 +9,6 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import MobileBottomNav from './components/layout/MobileBottomNav';
-import WhatsAppButton from './components/layout/WhatsAppButton';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import ProductDetail from './pages/ProductDetail';
@@ -76,7 +75,6 @@ function AppContent() {
 
       {!isAdmin && <Footer />}
       {!isAdmin && <MobileBottomNav />}
-      {!isAdmin && <WhatsAppButton />}
     </>
   );
 }
