@@ -69,8 +69,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           borderBottom: '1px solid #f0f0f0',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-            <span style={{ color: '#d35400', fontWeight: '700', fontSize: '18px' }}>Nagpur</span>
-            <span style={{ color: '#999', fontWeight: '400', fontSize: '18px' }}>wala</span>
+            <span style={{ color: '#d35400', fontWeight: '700', fontSize: '18px' }}>Shree Shiv</span>
+            <span style={{ color: '#999', fontWeight: '400', fontSize: '18px' }}>Vastralay</span>
           </div>
           <div
             onClick={onClose}

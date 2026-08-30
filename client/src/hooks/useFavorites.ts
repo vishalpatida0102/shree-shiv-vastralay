@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-const STORAGE_KEY = 'nagpur_wala_favorites';
+const STORAGE_KEY = 'shree_shiv_vastralay_favorites';
 
 function getFavorites(): string[] {
   try {

@@ -10,12 +10,12 @@ function ensureConfig() {
 
 /**
  * Extract public_id from Cloudinary URL
- * e.g. "https://res.cloudinary.com/xxx/image/upload/v123/nagpur_sarees/abc.jpg"
- * → "nagpur_sarees/abc"
+ * e.g. "https://res.cloudinary.com/xxx/image/upload/v123/shree_shiv_vastralay/abc.jpg"
+ * → "shree_shiv_vastralay/abc"
  */
 export function extractPublicId(url: string): string | null {
   try {
-    const match = url.match(/\/upload\/(?:v\d+\/)?(nagpur_sarees\/.+?)(?:\.\w+)?$/);
+    const match = url.match(/\/upload\/(?:v\d+\/)?(shree_shiv_vastralay\/.+?)(?:\.\w+)?$/);
     return match ? match[1] : null;
   } catch {
     return null;

@@ -125,7 +125,7 @@ export default function Catalog() {
 
   return (
     <PageTransition>
-      <SEO title="साड़ियाँ" description="सिल्क, बनारसी, पैठणी, कॉटन और डिज़ाइनर साड़ियों का पूरा संग्रह। नागपुर वाला पर खरीदें।" />
+      <SEO title="साड़ियाँ" description="सिल्क, बनारसी, पैठणी, कॉटन और डिज़ाइनर साड़ियों का पूरा संग्रह। श्री शिव वस्त्रालय पर खरीदें।" />
       <div style={{ paddingTop: '80px', paddingBottom: '100px' }} className="md:pt-24 md:pb-12 min-h-screen">
         <div className="max-w-7xl mx-auto" style={{ padding: '0 16px' }}>
           <div style={{ marginBottom: '20px' }}>

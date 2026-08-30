@@ -47,7 +47,7 @@ export default function Contact() {
 
   return (
     <PageTransition>
-      <SEO title="संपर्क करें" description="नागपुर वाला से संपर्क करें। WhatsApp, फ़ोन या ईमेल — हम आपकी मदद के लिए तैयार हैं।" />
+      <SEO title="संपर्क करें" description="श्री शिव वस्त्रालय से संपर्क करें। WhatsApp, फ़ोन या ईमेल — हम आपकी मदद के लिए तैयार हैं।" />
       <div style={{ paddingTop: '76px', paddingBottom: '100px', minHeight: '100vh' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 16px' }}>
 
@@ -541,7 +541,7 @@ export default function Contact() {
                           onChange={(e) => setReviewForm({ ...reviewForm, location: e.target.value })}
                           onFocus={() => setFocusedField('rloc')}
                           onBlur={() => setFocusedField('')}
-                          placeholder="जैसे: नागपुर, इंदौर"
+                          placeholder="जैसे: बड़वाह, खरगोन"
                           style={inputStyle('rloc')}
                         />
                       </div>
