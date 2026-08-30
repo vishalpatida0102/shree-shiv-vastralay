@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
-import { shopInfo } from '../../data/dummyData';
+import { useConfig } from '../../context/ConfigContext';
 
 export default function WhatsAppButton() {
-  const whatsappUrl = `https://wa.me/${shopInfo.whatsapp.replace('+', '')}?text=${encodeURIComponent('नमस्ते! मुझे साड़ी के बारे में जानकारी चाहिए।')}`;
+  const { config, whatsappLink } = useConfig();
+  const whatsappUrl = whatsappLink(config.whatsappMessages.general);
 
   return (
     <motion.a

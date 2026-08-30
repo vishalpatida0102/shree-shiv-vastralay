@@ -1,15 +1,18 @@
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, Instagram, Clock, Send, ExternalLink, Star, CheckCircle } from 'lucide-react';
 import SEO from '../components/ui/SEO';
 import PageTransition from '../components/animations/PageTransition';
 import ScrollReveal from '../components/animations/ScrollReveal';
-import { shopInfo } from '../data/dummyData';
+import { useConfig } from '../context/ConfigContext';
+import { displayPhone } from '../config/siteConfig';
 import { reviewsApi } from '../services/api';
 import { useToast } from '../context/ToastContext';
 
 export default function Contact() {
   const { showToast } = useToast();
+  const { config, whatsappLink } = useConfig();
+  const { contact, social } = config;
   const [form, setForm] = useState({ name: '', phone: '', message: '' });
   const [focusedField, setFocusedField] = useState('');
   const [submitHover, setSubmitHover] = useState(false);
@@ -19,15 +22,12 @@ export default function Contact() {
   const [reviewSaving, setReviewSaving] = useState(false);
   const [reviewError, setReviewError] = useState('');
 
-  const whatsappUrl = `https://wa.me/${shopInfo.whatsapp.replace('+', '')}?text=${encodeURIComponent('नमस्ते! मुझे साड़ी के बारे में जानकारी चाहिए।')}`;
+  const whatsappUrl = whatsappLink(config.whatsappMessages.general);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const msg = `नमस्ते! मेरा नाम ${form.name} है।\nफ़ोन: ${form.phone}\n\n${form.message}`;
-    window.open(
-      `https://wa.me/${shopInfo.whatsapp.replace('+', '')}?text=${encodeURIComponent(msg)}`,
-      '_blank'
-    );
+    window.open(whatsappLink(msg), '_blank');
     showToast('WhatsApp पर संदेश भेजा जा रहा है!');
     setForm({ name: '', phone: '', message: '' });
   };
@@ -110,7 +110,7 @@ export default function Contact() {
 
             {/* Call */}
             <a
-              href={`tel:${shopInfo.phone}`}
+              href={`tel:${contact.phone}`}
               style={{
                 flex: 1,
                 display: 'flex',
@@ -133,7 +133,7 @@ export default function Contact() {
 
             {/* Instagram */}
             <a
-              href={shopInfo.instagram}
+              href={social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -190,7 +190,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>पता</p>
-                    <p style={{ fontSize: '13px', color: '#444', margin: 0, lineHeight: '1.6' }}>{shopInfo.address}</p>
+                    <p style={{ fontSize: '13px', color: '#444', margin: 0, lineHeight: '1.6' }}>{contact.address}</p>
                   </div>
                 </div>
 
@@ -213,13 +213,14 @@ export default function Contact() {
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>फ़ोन</p>
                     <div style={{ display: 'flex', gap: '12px' }}>
-                      <a href="tel:+919752985509" style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
-                        9752985509
-                      </a>
-                      <span style={{ color: '#ddd' }}>|</span>
-                      <a href="tel:+919243165323" style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
-                        9243165323
-                      </a>
+                      {[contact.phone, contact.phone2].filter(Boolean).map((num, i) => (
+                        <Fragment key={num}>
+                          {i > 0 && <span style={{ color: '#ddd' }}>|</span>}
+                          <a href={`tel:${num}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
+                            {displayPhone(num)}
+                          </a>
+                        </Fragment>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -242,8 +243,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>ईमेल</p>
-                    <a href={`mailto:${shopInfo.email}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
-                      {shopInfo.email}
+                    <a href={`mailto:${contact.email}`} style={{ fontSize: '13px', color: '#B8960C', textDecoration: 'none', fontWeight: '500' }}>
+                      {contact.email}
                     </a>
                   </div>
                 </div>
@@ -266,12 +267,11 @@ export default function Contact() {
                   </div>
                   <div>
                     <p style={{ fontSize: '11px', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 3px 0' }}>समय</p>
-                    <p style={{ fontSize: '13px', color: '#444', margin: '0 0 2px 0' }}>
-                      सोम - शनि: <strong style={{ color: '#2D2D2D' }}>सुबह 10:00 - रात 9:00</strong>
-                    </p>
-                    <p style={{ fontSize: '13px', color: '#444', margin: 0 }}>
-                      रविवार: <strong style={{ color: '#2D2D2D' }}>सुबह 11:00 - शाम 6:00</strong>
-                    </p>
+                    {contact.timings.map((t, i) => (
+                      <p key={t.label} style={{ fontSize: '13px', color: '#444', margin: i === contact.timings.length - 1 ? 0 : '0 0 2px 0' }}>
+                        {t.label}: <strong style={{ color: '#2D2D2D' }}>{t.hours}</strong>
+                      </p>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -289,7 +289,7 @@ export default function Contact() {
             }}>
               <div style={{ height: '220px' }}>
                 <iframe
-                  src={shopInfo.mapUrl}
+                  src={contact.mapUrl}
                   width="100%"
                   height="100%"
                   style={{ border: 0, display: 'block' }}
@@ -300,7 +300,7 @@ export default function Contact() {
                 />
               </div>
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shopInfo.address)}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

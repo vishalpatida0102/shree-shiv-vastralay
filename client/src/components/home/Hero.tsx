@@ -2,38 +2,25 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-
-const heroSlides = [
-  {
-    image: '',
-    title: 'नागपुर वाला',
-    subtitle: 'जहाँ परंपरा मिलती है फैशन से',
-    isLogo: true,
-  },
-  {
-    image: '/1772967136869 (1).png',
-    title: 'जहाँ परंपरा मिलती है फैशन से',
-    subtitle: 'एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन — नागपुर वाला',
-    isLogo: false,
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=1600',
-    title: 'ब्राइडल कलेक्शन',
-    subtitle: 'दुल्हन के लिए विशेष साड़ियाँ — ऐसी शान जो कभी पुरानी न हो',
-    isLogo: false,
-  },
-];
+import { useSiteConfig } from '../../context/ConfigContext';
 
 export default function Hero() {
+  const { hero, identity } = useSiteConfig();
+  const heroSlides = hero.slides;
   const [current, setCurrent] = useState(0);
   const [btnHovered, setBtnHovered] = useState(false);
 
   useEffect(() => {
+    if (heroSlides.length < 2) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
+
+  // एडमिन ने स्लाइड घटाई हों तो index रेंज से बाहर न जाए
+  const slide = heroSlides[current] || heroSlides[0];
+  if (!slide) return null;
 
   return (
     <section style={{ position: 'relative', height: '100vh', width: '100%', overflow: 'hidden' }}>
@@ -48,12 +35,12 @@ export default function Hero() {
           style={{
             position: 'absolute',
             inset: 0,
-            background: heroSlides[current].isLogo
+            background: slide.isLogo
               ? 'linear-gradient(135deg, #1a1206 0%, #2D2D2D 50%, #1a1206 100%)'
               : undefined,
           }}
         >
-          {heroSlides[current].isLogo ? (
+          {slide.isLogo ? (
             <div style={{
               width: '100%',
               height: '100%',
@@ -75,8 +62,8 @@ export default function Hero() {
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               >
                 <img
-                  src="/logo.jpeg"
-                  alt="नागपुर वाला"
+                  src={identity.logo}
+                  alt={identity.name}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -88,7 +75,7 @@ export default function Hero() {
             </div>
           ) : (
             <motion.img
-              src={heroSlides[current].image}
+              src={slide.image}
               alt=""
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               animate={{ scale: [1, 1.08] }}
@@ -102,7 +89,7 @@ export default function Hero() {
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: heroSlides[current].isLogo
+        background: slide.isLogo
           ? 'radial-gradient(circle at center 40%, transparent 30%, rgba(0,0,0,0.4) 100%)'
           : 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 100%)',
       }} />
@@ -138,7 +125,7 @@ export default function Hero() {
                 textShadow: '0 2px 8px rgba(0,0,0,0.3)',
               }}
             >
-              {heroSlides[current].title}
+              {slide.title}
             </h1>
             <p style={{
               color: 'rgba(255,255,255,0.75)',
@@ -147,7 +134,7 @@ export default function Hero() {
               margin: '0 auto 28px',
               lineHeight: '1.7',
             }}>
-              {heroSlides[current].subtitle}
+              {slide.subtitle}
             </p>
           </motion.div>
         </AnimatePresence>
@@ -159,7 +146,7 @@ export default function Hero() {
           transition={{ delay: 0.5 }}
         >
           <Link
-            to="/sarees"
+            to={hero.ctaLink}
             onMouseEnter={() => setBtnHovered(true)}
             onMouseLeave={() => setBtnHovered(false)}
             style={{
@@ -183,7 +170,7 @@ export default function Hero() {
               letterSpacing: '0.3px',
             }}
           >
-            संग्रह देखें
+            {hero.ctaText}
             <ArrowRight
               size={18}
               style={{

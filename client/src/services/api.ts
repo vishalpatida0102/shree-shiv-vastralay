@@ -1,3 +1,5 @@
+import type { SiteConfig } from '../config/siteConfig';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function getToken(): string | null {
@@ -180,4 +182,25 @@ export const uploadApi = {
       body: formData,
     });
   },
+};
+
+// ═══════ Site Config ═══════
+export type ApiSiteConfig = SiteConfig & {
+  _id: string;
+  key: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const configApi = {
+  /** पब्लिक — वेबसाइट लोड होते ही यही कॉल होता है */
+  get: () => request<ApiSiteConfig>('/config'),
+
+  update: (data: Partial<SiteConfig>) =>
+    request<ApiSiteConfig>('/config', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  reset: () => request<ApiSiteConfig>('/config/reset', { method: 'POST' }),
 };

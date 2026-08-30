@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { ConfigProvider } from './context/ConfigContext';
 import { HelmetProvider } from 'react-helmet-async';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
@@ -22,6 +23,7 @@ import AdminProducts from './pages/admin/Products';
 import AdminProductForm from './pages/admin/ProductForm';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminReviews from './pages/admin/AdminReviews';
+import AdminSettings from './pages/admin/AdminSettings';
 import NotFound from './pages/NotFound';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -67,6 +69,7 @@ function AppContent() {
           <Route path="/admin/products/edit/:id" element={<ProtectedRoute><AdminProductForm /></ProtectedRoute>} />
           <Route path="/admin/categories" element={<ProtectedRoute><AdminCategories /></ProtectedRoute>} />
           <Route path="/admin/reviews" element={<ProtectedRoute><AdminReviews /></ProtectedRoute>} />
+          <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
@@ -84,11 +87,13 @@ export default function App() {
     <HelmetProvider>
       <BrowserRouter>
         <AuthProvider>
-          <ToastProvider>
-            <AppContent />
-            <Analytics />
-            <SpeedInsights />
-          </ToastProvider>
+          <ConfigProvider>
+            <ToastProvider>
+              <AppContent />
+              <Analytics />
+              <SpeedInsights />
+            </ToastProvider>
+          </ConfigProvider>
         </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>

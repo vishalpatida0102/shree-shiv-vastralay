@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { shopInfo } from '../../data/dummyData';
+import { useSiteConfig } from '../../context/ConfigContext';
 
 interface CounterProps {
   end: number;
@@ -49,12 +49,10 @@ function Counter({ end, suffix = '', label }: CounterProps) {
 }
 
 export default function StatsSection() {
-  const stats = [
-    { end: shopInfo.stats.followers, suffix: '+', label: 'Instagram फॉलोअर्स' },
-    { end: shopInfo.stats.customers, suffix: '+', label: 'खुश ग्राहक' },
-    { end: shopInfo.stats.sarees, suffix: '+', label: 'साड़ियों का संग्रह' },
-    { end: shopInfo.stats.cities, suffix: '+', label: 'शहरों में डिलीवरी' },
-  ];
+  const config = useSiteConfig();
+  const stats = config.stats.map((s) => ({ end: s.value, suffix: s.suffix, label: s.label }));
+
+  if (stats.length === 0) return null;
 
   return (
     <section style={{ backgroundColor: '#2D2D2D', padding: '48px 16px' }}>

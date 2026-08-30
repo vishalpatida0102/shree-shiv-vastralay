@@ -1,25 +1,14 @@
 import { motion } from 'framer-motion';
-import { Truck, CreditCard, Clock, Package, MapPin, Phone, AlertCircle } from 'lucide-react';
+import { MapPin, Phone, AlertCircle } from 'lucide-react';
 import SectionHeading from '../ui/SectionHeading';
 import ScrollReveal from '../animations/ScrollReveal';
-import { shopInfo } from '../../data/dummyData';
-
-const highlights = [
-  { icon: Truck, title: '₹80 प्रति साड़ी', desc: 'पूरे भारत में डिलीवरी', color: '#D4AF37' },
-  { icon: Clock, title: '7 कार्य दिवस', desc: 'में डिलीवरी हो जाएगी', color: '#1565c0' },
-  { icon: CreditCard, title: 'ऑनलाइन पेमेंट', desc: 'सिर्फ प्रीपेड ऑर्डर', color: '#2e7d32' },
-  { icon: Package, title: '1 साड़ी से ऑर्डर', desc: 'कोई मिनिमम ऑर्डर नहीं', color: '#7b1fa2' },
-];
-
-const steps = [
-  { num: '1', title: 'साड़ी चुनें', desc: 'वेबसाइट पर पसंदीदा साड़ी देखें' },
-  { num: '2', title: 'WhatsApp पर बताएँ', desc: 'नाम, नंबर, पता, पिनकोड दें' },
-  { num: '3', title: 'पेमेंट करें', desc: 'ऑनलाइन पेमेंट करें' },
-  { num: '4', title: 'डिलीवरी पाएँ', desc: '7 कार्य दिवस में घर पहुँचे' },
-];
+import { useConfig } from '../../context/ConfigContext';
+import { getIcon } from '../../config/icons';
 
 export default function DeliveryInfo() {
-  const whatsappUrl = `https://wa.me/${shopInfo.whatsapp.replace('+', '')}?text=${encodeURIComponent('नमस्ते! मुझे साड़ी ऑर्डर करनी है।')}`;
+  const { config, whatsappLink } = useConfig();
+  const { highlights, steps, requiredFields, notes, ctaText } = config.delivery;
+  const whatsappUrl = whatsappLink(config.whatsappMessages.order);
 
   return (
     <section style={{ padding: '48px 0', maxWidth: '1200px', margin: '0 auto' }}>
@@ -33,7 +22,7 @@ export default function DeliveryInfo() {
         `}</style>
         <div id="delivery-grid">
           {highlights.map((item, i) => {
-            const Icon = item.icon;
+            const Icon = getIcon(item.icon);
             return (
               <ScrollReveal key={item.title} delay={i * 0.08}>
                 <div style={{
@@ -83,7 +72,7 @@ export default function DeliveryInfo() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {steps.map((step, i) => (
                 <motion.div
-                  key={step.num}
+                  key={step.title}
                   initial={{ opacity: 0, x: -16 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -100,7 +89,7 @@ export default function DeliveryInfo() {
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <span className="font-heading" style={{ fontSize: '14px', fontWeight: '700', color: '#1a1a1a' }}>{step.num}</span>
+                    <span className="font-heading" style={{ fontSize: '14px', fontWeight: '700', color: '#1a1a1a' }}>{i + 1}</span>
                   </div>
                   <div>
                     <p style={{ fontSize: '14px', fontWeight: '600', color: '#fff', margin: '0 0 2px' }}>{step.title}</p>
@@ -123,7 +112,7 @@ export default function DeliveryInfo() {
                 <p style={{ fontSize: '12px', fontWeight: '600', color: '#D4AF37', margin: 0 }}>ऑर्डर के लिए यह जानकारी दें:</p>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {['पूरा नाम', 'मोबाइल नंबर', 'पूरा पता', 'पिनकोड'].map((tag) => (
+                {requiredFields.map((tag) => (
                   <span key={tag} style={{
                     fontSize: '11px',
                     fontWeight: '500',
@@ -145,10 +134,7 @@ export default function DeliveryInfo() {
               flexDirection: 'column',
               gap: '6px',
             }}>
-              {[
-                'Cash on Delivery उपलब्ध नहीं है',
-                'कोई एक्सचेंज या रिटर्न नहीं',
-              ].map((note) => (
+              {notes.map((note) => (
                 <div key={note} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <AlertCircle size={12} style={{ color: 'rgba(255,255,255,0.4)', flexShrink: 0 }} />
                   <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>{note}</p>
@@ -178,7 +164,7 @@ export default function DeliveryInfo() {
               }}
             >
               <Phone size={18} />
-              अभी ऑर्डर करें — WhatsApp
+              {ctaText}
             </a>
           </div>
         </ScrollReveal>

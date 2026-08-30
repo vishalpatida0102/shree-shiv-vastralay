@@ -10,7 +10,8 @@ import StaggerChildren from '../components/animations/StaggerChildren';
 import ScrollReveal from '../components/animations/ScrollReveal';
 import { productsApi } from '../services/api';
 import { toSaree } from '../services/helpers';
-import { shopInfo } from '../data/dummyData';
+import { useConfig } from '../context/ConfigContext';
+import { displayPhone } from '../config/siteConfig';
 import { useFavorites } from '../hooks/useFavorites';
 import { useRecentlyViewed } from '../hooks/useRecentlyViewed';
 import { useToast } from '../context/ToastContext';
@@ -29,6 +30,7 @@ export default function ProductDetail() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { addItem: addRecentlyViewed } = useRecentlyViewed();
   const { showToast } = useToast();
+  const { config, whatsappLink } = useConfig();
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const isSwiping = useRef(false);
@@ -79,8 +81,11 @@ export default function ProductDetail() {
 
   const liked = isFavorite(saree.id);
   const productLink = `${window.location.origin}/saree/${saree.id}`;
-  const whatsappMsg = `नमस्ते! मुझे इस साड़ी के बारे में जानकारी चाहिए:\n\n*${saree.name}*\n💰 ₹${saree.price.toLocaleString('hi-IN')}\n🔗 ${productLink}`;
-  const whatsappUrl = `https://wa.me/${shopInfo.whatsapp.replace('+', '')}?text=${encodeURIComponent(whatsappMsg)}`;
+  const whatsappMsg = config.whatsappMessages.product
+    .replace('{name}', saree.name)
+    .replace('{price}', saree.price.toLocaleString('hi-IN'))
+    .replace('{link}', productLink);
+  const whatsappUrl = whatsappLink(whatsappMsg);
   const discount = saree.originalPrice ? Math.round(((saree.originalPrice - saree.price) / saree.originalPrice) * 100) : 0;
 
   const nextImage = () => setSelectedImage((prev) => (prev + 1) % saree.images.length);
@@ -370,8 +375,8 @@ export default function ProductDetail() {
                 इस साड़ी के बारे में पूछें
               </a>
 
-              <a href={`tel:${shopInfo.phone}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: 'transparent', color: '#B8960C', fontWeight: '600', padding: '13px', borderRadius: '14px', fontSize: '14px', textDecoration: 'none', border: '1.5px solid #B8960C' }}>
-                📞 कॉल करें — {shopInfo.phone.replace('+91', '')}
+              <a href={`tel:${config.contact.phone}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: 'transparent', color: '#B8960C', fontWeight: '600', padding: '13px', borderRadius: '14px', fontSize: '14px', textDecoration: 'none', border: '1.5px solid #B8960C' }}>
+                📞 कॉल करें — {displayPhone(config.contact.phone)}
               </a>
             </ScrollReveal>
           </div>

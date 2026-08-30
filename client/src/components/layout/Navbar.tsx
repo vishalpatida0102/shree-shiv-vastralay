@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Heart } from 'lucide-react';
 import { useFavorites } from '../../hooks/useFavorites';
+import { useSiteConfig } from '../../context/ConfigContext';
 
 const navLinks = [
   { name: 'होम', path: '/' },
@@ -17,6 +18,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { count } = useFavorites();
+  const { identity } = useSiteConfig();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -77,8 +79,8 @@ export default function Navbar() {
               }}
             >
               <img
-                src="/logo.jpeg"
-                alt="नागपुर वाला"
+                src={identity.logo}
+                alt={identity.name}
                 style={{
                   width: '36px',
                   height: '36px',
@@ -88,7 +90,7 @@ export default function Navbar() {
                 }}
               />
               <span className="font-heading" style={{ fontSize: '20px', fontWeight: '700', color: '#B8960C' }}>
-                नागपुर वाला
+                {identity.name}
               </span>
             </Link>
 
@@ -219,8 +221,8 @@ export default function Navbar() {
             {/* Brand */}
             <div style={{ marginBottom: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <img
-                src="/logo.jpeg"
-                alt="नागपुर वाला"
+                src={identity.logo}
+                alt={identity.name}
                 style={{
                   width: '56px',
                   height: '56px',
@@ -232,10 +234,10 @@ export default function Navbar() {
                 }}
               />
               <span className="font-heading" style={{ fontSize: '28px', fontWeight: '700', color: '#B8960C' }}>
-                नागपुर वाला
+                {identity.name}
               </span>
               <p style={{ fontSize: '12px', color: '#999', marginTop: '6px', letterSpacing: '2px', textTransform: 'uppercase' }}>
-                Nagpur Wala
+                {identity.nameEn}
               </p>
             </div>
 

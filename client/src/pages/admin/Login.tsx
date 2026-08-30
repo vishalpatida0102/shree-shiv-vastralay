@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useSiteConfig } from '../../context/ConfigContext';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const { identity } = useSiteConfig();
   const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,8 +53,8 @@ export default function AdminLogin() {
       >
         {/* Background Image */}
         <img
-          src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800"
-          alt="Nagpur Wala Sarees"
+          src={identity.loginBackground}
+          alt={identity.name}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
         />
         {/* Dark overlay */}
@@ -77,12 +79,12 @@ export default function AdminLogin() {
           border: '1px solid rgba(212,175,55,0.2)',
         }}>
           <img
-            src="/logo.jpeg"
-            alt="Logo"
+            src={identity.logo}
+            alt={identity.name}
             style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '1.5px solid #D4AF37' }}
           />
           <span style={{ fontSize: '14px', fontWeight: '700', color: '#D4AF37', fontFamily: 'Noto Serif Devanagari, serif' }}>
-            नागपुर वाला
+            {identity.name}
           </span>
         </div>
 
@@ -142,8 +144,8 @@ export default function AdminLogin() {
             marginBottom: '40px',
           }}>
             <img
-              src="/logo.jpeg"
-              alt="Logo"
+              src={identity.logo}
+              alt={identity.name}
               style={{
                 width: '56px',
                 height: '56px',
@@ -214,7 +216,7 @@ export default function AdminLogin() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@nagpurwala.com"
+                  placeholder="आपका ईमेल"
                   style={{
                     width: '100%',
                     padding: '14px 16px 14px 44px',

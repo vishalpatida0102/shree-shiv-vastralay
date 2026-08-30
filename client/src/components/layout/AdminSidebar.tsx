@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, Grid3X3, MessageSquare, LogOut, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Grid3X3, MessageSquare, Settings, LogOut, ChevronLeft } from 'lucide-react';
 import { useReviews } from '../../hooks/useReviews';
 import { useAuth } from '../../context/AuthContext';
 
@@ -8,6 +8,7 @@ const menuItems = [
   { name: 'उत्पाद', path: '/admin/products', icon: ShoppingBag, color: '#2563eb', bg: 'rgba(37,99,235,0.08)' },
   { name: 'श्रेणियाँ', path: '/admin/categories', icon: Grid3X3, color: '#059669', bg: 'rgba(5,150,105,0.08)' },
   { name: 'समीक्षाएँ', path: '/admin/reviews', icon: MessageSquare, color: '#d97706', bg: 'rgba(217,119,6,0.08)' },
+  { name: 'वेबसाइट सेटिंग्स', path: '/admin/settings', icon: Settings, color: '#7c3aed', bg: 'rgba(124,58,237,0.08)' },
 ];
 
 interface AdminSidebarProps {

@@ -8,6 +8,7 @@ import productRoutes from './routes/products';
 import categoryRoutes from './routes/categories';
 import reviewRoutes from './routes/reviews';
 import uploadRoutes from './routes/upload';
+import configRoutes from './routes/config';
 import { seedAdmin } from './utils/seed';
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/config', configRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

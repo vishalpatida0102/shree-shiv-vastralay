@@ -1,43 +1,22 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Gem, Heart, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/ui/SEO';
 import PageTransition from '../components/animations/PageTransition';
 import ScrollReveal from '../components/animations/ScrollReveal';
 import StatsSection from '../components/home/StatsSection';
-import { shopInfo } from '../data/dummyData';
-
-const values = [
-  {
-    icon: Gem,
-    color: '#D4AF37',
-    bg: 'rgba(212,175,55,0.08)',
-    title: 'गुणवत्ता',
-    desc: 'हम सिर्फ सबसे बेहतरीन कपड़ों और शिल्प का चयन करते हैं। हर साड़ी गुणवत्ता की कसौटी पर खरी उतरती है।',
-  },
-  {
-    icon: Shield,
-    color: '#B8960C',
-    bg: 'rgba(184,150,12,0.06)',
-    title: 'परंपरा',
-    desc: 'भारतीय बुनकरों की सदियों पुरानी कला और परंपरा को हम आगे बढ़ा रहे हैं। हर धागे में एक कहानी है।',
-  },
-  {
-    icon: Heart,
-    color: '#c62828',
-    bg: 'rgba(198,40,40,0.06)',
-    title: 'विश्वास',
-    desc: 'तीन पीढ़ियों से हमारे ग्राहकों का विश्वास ही हमारी सबसे बड़ी पूंजी है। आपकी संतुष्टि हमारी प्राथमिकता।',
-  },
-];
+import { useSiteConfig } from '../context/ConfigContext';
+import { getIcon } from '../config/icons';
 
 export default function About() {
   const [ctaHovered, setCtaHovered] = useState(false);
+  const { identity, about } = useSiteConfig();
+  const values = about.values;
 
   return (
     <PageTransition>
-      <SEO title="हमारे बारे में" description="नागपुर वाला — 39,000+ ग्राहकों का भरोसा। जानिए हमारी कहानी और हमारे मूल्य।" />
+      <SEO title="हमारे बारे में" description={about.story.slice(0, 160)} />
       <div style={{ paddingTop: '64px', minHeight: '100vh', backgroundColor: '#FAF7F2' }}>
 
         {/* ═══════ Hero Section ═══════ */}
@@ -62,8 +41,8 @@ export default function About() {
               boxShadow: '0 0 60px rgba(212,175,55,0.3), 0 0 120px rgba(212,175,55,0.1)',
             }}>
               <img
-                src="/logo.jpeg"
-                alt="नागपुर वाला"
+                src={identity.logo}
+                alt={identity.name}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -127,7 +106,7 @@ export default function About() {
                 margin: 0,
                 lineHeight: '1.6',
               }}>
-                {shopInfo.tagline}
+                {identity.tagline}
               </p>
             </motion.div>
           </div>
@@ -148,7 +127,7 @@ export default function About() {
                 className="font-heading"
                 style={{ fontSize: '24px', fontWeight: '700', color: '#B8960C', margin: 0 }}
               >
-                नागपुर वाला
+                {identity.name}
               </h2>
             </div>
 
@@ -159,7 +138,7 @@ export default function About() {
               textAlign: 'center',
               margin: 0,
             }}>
-              {shopInfo.story}
+              {about.story}
             </p>
           </ScrollReveal>
         </section>
@@ -172,7 +151,7 @@ export default function About() {
           `}</style>
           <div id="values-grid">
             {values.map((v, i) => {
-              const Icon = v.icon;
+              const Icon = getIcon(v.icon);
               return (
                 <ScrollReveal key={v.title} delay={i * 0.12}>
                   <div style={{
@@ -223,7 +202,7 @@ export default function About() {
             <div style={{
               position: 'absolute',
               inset: 0,
-              backgroundImage: `url('https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=1200')`,
+              backgroundImage: `url('${about.parallaxImage}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundAttachment: 'fixed',
@@ -257,13 +236,12 @@ export default function About() {
                     margin: '0 0 20px 0',
                   }}
                 >
-                  हर साड़ी एक कहानी कहती है — बुनकरों की कला, परंपरा की विरासत
-                  और पहनने वाली की शान।
+                  {about.quote}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                   <div style={{ width: '24px', height: '1.5px', backgroundColor: '#D4AF37' }} />
                   <span style={{ fontSize: '12px', fontWeight: '600', color: '#D4AF37' }}>
-                    {shopInfo.name}
+                    {identity.name}
                   </span>
                   <div style={{ width: '24px', height: '1.5px', backgroundColor: '#D4AF37' }} />
                 </div>
@@ -297,13 +275,8 @@ export default function About() {
 
           {/* Features list */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {[
-              { num: '01', title: 'प्रीमियम क्वालिटी', desc: 'हर साड़ी को सावधानीपूर्वक चुना जाता है और गुणवत्ता जांच के बाद ही आप तक पहुँचती है।' },
-              { num: '02', title: 'सीधे बुनकरों से', desc: 'हम बनारस, पैठण और कांजीवरम के बुनकरों से सीधे साड़ियाँ लाते हैं — बिचौलिया नहीं।' },
-              { num: '03', title: 'उचित दाम', desc: 'सीधी खरीदारी का फायदा — आपको मिलती है बेहतरीन साड़ी, उचित दाम में।' },
-              { num: '04', title: 'पूरे भारत में डिलीवरी', desc: '25+ शहरों में सुरक्षित पैकिंग के साथ तेज़ डिलीवरी।' },
-            ].map((item, i) => (
-              <ScrollReveal key={item.num} delay={i * 0.1}>
+            {about.whyChooseUs.map((item, i) => (
+              <ScrollReveal key={item.title} delay={i * 0.1}>
                 <div style={{
                   display: 'flex',
                   gap: '16px',
@@ -324,7 +297,7 @@ export default function About() {
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <span style={{ fontSize: '13px', fontWeight: '700', color: '#fff' }}>{item.num}</span>
+                    <span style={{ fontSize: '13px', fontWeight: '700', color: '#fff' }}>{String(i + 1).padStart(2, '0')}</span>
                   </div>
                   <div>
                     <h4

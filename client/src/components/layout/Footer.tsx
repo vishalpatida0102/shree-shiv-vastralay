@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Instagram } from 'lucide-react';
-import { shopInfo } from '../../data/dummyData';
+import { useSiteConfig } from '../../context/ConfigContext';
+import { displayPhone, socialHandle } from '../../config/siteConfig';
 
 export default function Footer() {
+  const config = useSiteConfig();
+  const { identity, contact, social } = config;
+
   return (
     <footer style={{ backgroundColor: '#2D2D2D', color: '#fff', paddingBottom: '100px' }} className="md:pb-8">
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 20px 0' }}>
@@ -10,8 +14,8 @@ export default function Footer() {
         {/* Top Section - Brand */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '36px' }}>
           <img
-            src="/logo.jpeg"
-            alt={shopInfo.name}
+            src={identity.logo}
+            alt={identity.name}
             style={{
               width: '44px',
               height: '44px',
@@ -22,10 +26,10 @@ export default function Footer() {
             }}
           />
           <h3 className="font-heading" style={{ fontSize: '28px', fontWeight: '700', color: '#D4AF37', marginBottom: '10px' }}>
-            {shopInfo.name}
+            {identity.name}
           </h3>
           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', maxWidth: '320px', textAlign: 'center', lineHeight: '1.7' }}>
-            {shopInfo.tagline}
+            {identity.tagline}
           </p>
         </div>
 
@@ -75,27 +79,30 @@ export default function Footer() {
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <a
-                href={`tel:${shopInfo.phone}`}
+                href={`tel:${contact.phone}`}
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none' }}
               >
                 <Phone size={14} style={{ flexShrink: 0 }} />
-                <span>9752985509<br />9243165323</span>
+                <span>
+                  {displayPhone(contact.phone)}
+                  {contact.phone2 && <><br />{displayPhone(contact.phone2)}</>}
+                </span>
               </a>
               <a
-                href={`mailto:${shopInfo.email}`}
+                href={`mailto:${contact.email}`}
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none', wordBreak: 'break-all' }}
               >
                 <Mail size={14} style={{ flexShrink: 0 }} />
-                {shopInfo.email}
+                {contact.email}
               </a>
               <a
-                href={shopInfo.instagram}
+                href={social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none' }}
               >
                 <Instagram size={14} style={{ flexShrink: 0 }} />
-                @nagpur_wala04
+                {socialHandle(social.instagram)}
               </a>
             </div>
           </div>
@@ -107,7 +114,7 @@ export default function Footer() {
             </h4>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', color: 'rgba(255,255,255,0.6)', fontSize: '13px', lineHeight: '1.7' }}>
               <MapPin size={14} style={{ flexShrink: 0, marginTop: '3px' }} />
-              <span>{shopInfo.address}</span>
+              <span>{contact.address}</span>
             </div>
           </div>
         </div>
@@ -115,7 +122,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', marginTop: '36px', paddingTop: '20px', textAlign: 'center' }}>
           <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '12px' }}>
-            &copy; {new Date().getFullYear()} {shopInfo.name}। सभी अधिकार सुरक्षित।
+            &copy; {new Date().getFullYear()} {identity.name}। सभी अधिकार सुरक्षित।
           </p>
           <Link
             to="/admin"
