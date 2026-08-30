@@ -18,7 +18,7 @@ export async function uploadImage(req: Request, res: Response) {
     const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
     const result = await cloudinary.uploader.upload(dataURI, {
-      folder: 'nagpur_sarees',
+      folder: 'shree_shiv_vastralay',
       transformation: [{ width: 800, quality: 'auto' }],
     });
 

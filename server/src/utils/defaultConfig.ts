@@ -7,28 +7,28 @@
 export const defaultConfig = {
   key: 'site',
   identity: {
-    name: 'नागपुर वाला',
-    nameEn: 'Nagpur Wala',
+    name: 'श्री शिव वस्त्रालय',
+    nameEn: 'Shree Shiv Vastralay',
     tagline: 'जहाँ परंपरा मिलती है फैशन से',
     taglineEn: 'Where tradition meets fashion',
     logo: '/logo.jpeg',
     loginBackground: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800',
   },
   contact: {
-    phone: '+919243165323',
-    phone2: '+919752985509',
-    whatsapp: '+919243165323',
-    email: 'nagpurwala04@gmail.com',
-    address: 'ग्राम नागपुर, सांवेर, इंदौर, मध्य प्रदेश',
-    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.1234567890!2d79.0882!3d21.1458!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDA4JzQ1LjAiTiA3OcKwMDUnMTcuNiJF!5e0!3m2!1sen!2sin!4v1234567890',
+    phone: '+919926598052',
+    phone2: '+919516790305',
+    whatsapp: '+919516790302',
+    email: 'binodjibinod27@gmail.com',
+    address: 'द्वारिका वाटी मार्केट, जयस्तम्भ चौराहा, बड़वाह, मध्य प्रदेश',
+    mapUrl: 'https://maps.google.com/maps?q=Shree+shiv+vastralay+Dwarika+vati+market+jaystambh+choraha+barwaha&output=embed',
     timings: [
       { label: 'सोम - शनि', hours: 'सुबह 10:00 - रात 9:00' },
       { label: 'रविवार', hours: 'सुबह 11:00 - शाम 6:00' },
     ],
   },
   social: {
-    instagram: 'https://instagram.com/nagpur_wala04',
-    facebook: 'https://facebook.com/nagpurwala',
+    instagram: 'https://www.instagram.com/shree_shiv_vastralay_barwaha',
+    facebook: '',
     youtube: '',
   },
   whatsappMessages: {
@@ -38,11 +38,11 @@ export const defaultConfig = {
   },
   hero: {
     slides: [
-      { image: '', title: 'नागपुर वाला', subtitle: 'जहाँ परंपरा मिलती है फैशन से', isLogo: true },
+      { image: '', title: 'श्री शिव वस्त्रालय', subtitle: 'जहाँ परंपरा मिलती है फैशन से', isLogo: true },
       {
         image: '/1772967136869 (1).png',
         title: 'जहाँ परंपरा मिलती है फैशन से',
-        subtitle: 'एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन — नागपुर वाला',
+        subtitle: 'एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन — श्री शिव वस्त्रालय',
         isLogo: false,
       },
       {
@@ -79,7 +79,7 @@ export const defaultConfig = {
     ctaText: 'अभी ऑर्डर करें — WhatsApp',
   },
   about: {
-    story: 'नागपुर वाला — जहाँ परंपरा मिलती है फैशन से। हम एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन लेकर आए हैं जो कभी पुरानी नहीं होतीं। हमारा मानना है कि हर साड़ी एक कहानी कहती है — बुनकरों की कला, परंपरा की विरासत और पहनने वाली की शान। 39,000+ से ज़्यादा ग्राहकों का भरोसा ही हमारी पहचान है।',
+    story: 'श्री शिव वस्त्रालय — जहाँ परंपरा मिलती है फैशन से। हम एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन लेकर आए हैं जो कभी पुरानी नहीं होतीं। हमारा मानना है कि हर साड़ी एक कहानी कहती है — बुनकरों की कला, परंपरा की विरासत और पहनने वाली की शान। 39,000+ से ज़्यादा ग्राहकों का भरोसा ही हमारी पहचान है।',
     quote: 'हर साड़ी एक कहानी कहती है — बुनकरों की कला, परंपरा की विरासत और पहनने वाली की शान।',
     highlights: ['Exclusive Sarees', 'Bridal Collection', 'Elegance that never fades'],
     values: [
@@ -114,8 +114,8 @@ export const defaultConfig = {
     parallaxImage: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=1200',
   },
   seo: {
-    title: 'नागपुर वाला — जहाँ परंपरा मिलती है फैशन से',
-    description: 'एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन। सिल्क, बनारसी, पैठणी, कॉटन और डिज़ाइनर साड़ियाँ। नागपुर वाला — 39,000+ ग्राहकों का भरोसा।',
+    title: 'श्री शिव वस्त्रालय — जहाँ परंपरा मिलती है फैशन से',
+    description: 'एक्सक्लूसिव साड़ियाँ और ब्राइडल कलेक्शन। सिल्क, बनारसी, पैठणी, कॉटन और डिज़ाइनर साड़ियाँ। श्री शिव वस्त्रालय — 39,000+ ग्राहकों का भरोसा।',
     ogImage: '',
   },
 };

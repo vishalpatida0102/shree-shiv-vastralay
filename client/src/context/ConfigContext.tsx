@@ -3,7 +3,7 @@ import { DEFAULT_CONFIG } from '../config/siteConfig';
 import type { SiteConfig } from '../config/siteConfig';
 import { configApi } from '../services/api';
 
-const CACHE_KEY = 'nagpur_wala_site_config';
+const CACHE_KEY = 'shree_shiv_vastralay_site_config';
 
 /**
  * सर्वर से आए config को DEFAULT_CONFIG के ऊपर मर्ज करता है।

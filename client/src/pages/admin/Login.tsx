@@ -157,7 +157,7 @@ export default function AdminLogin() {
               }}
             />
             <span style={{ fontSize: '22px', fontWeight: '700', color: '#D4AF37', fontFamily: 'Noto Serif Devanagari, serif' }}>
-              नागपुर वाला
+              श्री शिव वस्त्रालय
             </span>
           </div>
 
@@ -351,7 +351,7 @@ export default function AdminLogin() {
           }}>
             <div style={{ width: '20px', height: '1px', backgroundColor: '#333' }} />
             <span style={{ fontSize: '11px', color: '#444', letterSpacing: '1px' }}>
-              नागपुर वाला एडमिन
+              श्री शिव वस्त्रालय एडमिन
             </span>
             <div style={{ width: '20px', height: '1px', backgroundColor: '#333' }} />
           </div>

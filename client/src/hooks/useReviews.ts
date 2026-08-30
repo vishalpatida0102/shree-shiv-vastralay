@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Review } from '../types';
 
-const STORAGE_KEY = 'nagpur_wala_reviews';
+const STORAGE_KEY = 'shree_shiv_vastralay_reviews';
 
 function getReviews(): Review[] {
   try {

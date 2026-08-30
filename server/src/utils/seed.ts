@@ -5,7 +5,7 @@ import Admin from '../models/Admin';
 dotenv.config();
 
 export async function seedAdmin() {
-  const email = process.env.ADMIN_EMAIL || 'admin@nagpurwala.com';
+  const email = process.env.ADMIN_EMAIL || 'admin@shreeshivvastralay.com';
   const password = process.env.ADMIN_PASSWORD || 'admin123';
 
   const existing = await Admin.findOne({ email });

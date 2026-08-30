@@ -11,7 +11,7 @@ export const testimonials: Testimonial[] = [
   {
     id: '1',
     name: 'प्रिया शर्मा',
-    location: 'नागपुर',
+    location: 'बड़वाह',
     text: 'बहुत ही सुंदर साड़ियाँ! मैंने अपनी बेटी की शादी के लिए यहाँ से बनारसी साड़ी ली थी। सबने तारीफ की। क्वालिटी बेहतरीन है।',
     rating: 5,
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
@@ -35,7 +35,7 @@ export const testimonials: Testimonial[] = [
   {
     id: '4',
     name: 'रेखा जोशी',
-    location: 'नागपुर',
+    location: 'बड़वाह',
     text: 'मैं पिछले 10 सालों से यहीं से साड़ियाँ खरीदती हूँ। हमेशा नए डिज़ाइन मिलते हैं और स्टाफ बहुत हेल्पफुल है।',
     rating: 4,
     image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
